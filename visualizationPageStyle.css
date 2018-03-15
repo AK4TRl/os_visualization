@@ -18,7 +18,6 @@ body {
 	text-align: left; /* this overrides the text-align: center on the body element. */
 }
 .VisualizationMainPage #algoControlSection {
-	width: 404px;
 	float: left;
 	height: 100vh;
 	background: #333;
@@ -38,7 +37,7 @@ body {
 	color: #949494;
 	cursor:pointer;
 	text-align: left;
-	width: 400px;
+	width: 300px;
 	line-height: 24px;
 	font-size: 18px;
 }

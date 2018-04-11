@@ -826,22 +826,11 @@ Banker.prototype.randomizeArray = function () {
         this.theNeedIndex[i] = new Array();
         this.theFreeAndAllocationIndex[i] = new Array();
     }
-
-    var value1 = "\u8fdb\u7a0b\u005c\u8d44\u6e90";
-    value1 = reconvert(value1);
-    var value2 = "\u9700\u6c42";
-    value2 = reconvert(value2);
-    var value3 = "\u5df2\u5206\u914d";
-    value3 = reconvert(value3);
-    var value4 = "\u9700\u8981";
-    value4 = reconvert(value4);
-    var value5 = "\u521d\u59cb\u8d44\u6e90"
-    value5 = reconvert(value5);
     var labelCount = 0;
-    this.cmd("SetText",this.barLabels[labelCount++],value1);
-    this.cmd("SetText",this.barLabels[labelCount++],value2);
-    this.cmd("SetText",this.barLabels[labelCount++],value3);
-    this.cmd("SetText",this.barLabels[labelCount++],value4);
+    this.cmd("SetText",this.barLabels[labelCount++],"Available");
+    this.cmd("SetText",this.barLabels[labelCount++],"Max");
+    this.cmd("SetText",this.barLabels[labelCount++],"Allocation");
+    this.cmd("SetText",this.barLabels[labelCount++],"Need");
     this.cmd("SetText",this.barLabels[labelCount++],"Free + Allocation");
     this.cmd("SetText",this.barLabels[labelCount++],"Finish");
 

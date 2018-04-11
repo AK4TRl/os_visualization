@@ -826,8 +826,11 @@ Banker.prototype.randomizeArray = function () {
         this.theNeedIndex[i] = new Array();
         this.theFreeAndAllocationIndex[i] = new Array();
     }
+
+    var value1 = "\u8fdb\u7a0b\u005c\u8d44\u6e90";
+    value1 = reconvert(value1);
     var labelCount = 0;
-    this.cmd("SetText",this.barLabels[labelCount++],"Available");
+    this.cmd("SetText",this.barLabels[labelCount++],value1);
     this.cmd("SetText",this.barLabels[labelCount++],"Max");
     this.cmd("SetText",this.barLabels[labelCount++],"Allocation");
     this.cmd("SetText",this.barLabels[labelCount++],"Need");
@@ -854,7 +857,7 @@ Banker.prototype.randomizeArray = function () {
         this.theStausIndex.push(this.barLabels[labelCount - 1]);
         //this.cmd("SetHeight", this.barObjects[i], this.arrayData[i] * SCALE_FACTOR);
     }
-    this.cmd("SetText",this.barLabels[labelCount++],value5);
+    this.cmd("SetText",this.barLabels[labelCount++],"Avaliable");
     for(var i = 0; i < 4; ++i){
         this.cmd("SetText",this.barLabels[labelCount++],"R" + (i + 1));
     }

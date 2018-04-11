@@ -383,12 +383,6 @@ AnimatedLinkedList.prototype.setText = function(newText, textIndex)
     this.resetTextPosition();
 }
 
-
-
-
-
-
-
 AnimatedLinkedList.prototype.createUndoDelete = function()
 {
     return new UndoDeleteLinkedList(this.objectID, this.numLabels, this.labels, this.x, this.y, this.w, this.h, this.linkPercent,
@@ -403,8 +397,6 @@ AnimatedLinkedList.prototype.setHighlight = function(value)
         this.highlighted = value;
     }
 }
-
-
 
 
 function UndoDeleteLinkedList(id, numlab, lab, x, y, w, h, linkper, posEnd, vert, labColors, bgColor, fgColor, l, np)
@@ -428,8 +420,6 @@ function UndoDeleteLinkedList(id, numlab, lab, x, y, w, h, linkper, posEnd, vert
 
 UndoDeleteLinkedList.prototype = new UndoBlock();
 UndoDeleteLinkedList.prototype.constructor = UndoDeleteLinkedList;
-
-
 
 UndoDeleteLinkedList.prototype.undoInitialStep =function(world)
 {

@@ -18,6 +18,7 @@ body {
 	text-align: left; /* this overrides the text-align: center on the body element. */
 }
 .VisualizationMainPage #algoControlSection {
+	width:250px;
 	float: left;
 	height: 100vh;
 	background: #333;
@@ -37,7 +38,7 @@ body {
 	color: #949494;
 	cursor:pointer;
 	text-align: left;
-	width: 300px;
+	width: 250px;
 	line-height: 24px;
 	font-size: 18px;
 }
@@ -62,11 +63,17 @@ body {
 	color:#006600;
 }
 .VisualizationMainPage  #header {
-	background: #000;
+	background: #333;
 	/*background: #006633; */
 	color:#fff;
-	padding: 0 10px 0 20px;
-} 
+	padding: 0 10px 0 0;
+}
+  .VisualizationMainPage  #header #header_left{
+	  background: #FF6347;
+	  color:#fff;
+	  padding: 0 10px 0 20px;
+	  width: 220px;
+  }
  
 .VisualizationMainPage #header  A:visited {
 	text-decoration:none;
@@ -101,9 +108,6 @@ body {
 	color:#fff;
 }
 
-
-	
-
 .VisualizationMainPage #mainContent h1{
 	padding: 0 20px; 
 	background: #FFFFFF;
@@ -126,7 +130,7 @@ body {
 
 .VisualizationMainPage #footer {
 	padding: 0 10px;
-    background: #000;
+    background: #333;
 	color:#ffcc33;
 } 
 .VisualizationMainPage #footer p {

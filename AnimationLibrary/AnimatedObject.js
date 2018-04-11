@@ -93,8 +93,6 @@ AnimatedObject.prototype.setWidth = function(newWidth)
 
 }
 
-
-
 AnimatedObject.prototype.centerY = function()
 {
 	return this.y;
@@ -215,7 +213,6 @@ AnimatedObject.prototype.centered = function()
 	return false;
 }
 
-
 AnimatedObject.prototype.pulseHighlight = function(frameNum)
 {
 	if (this.highlighted)
@@ -237,13 +234,6 @@ AnimatedObject.prototype.getHeadPointerAttachPos = function(fromX, fromY)
 {
 	return [this.x, this.y];
 }
-
-/*public function createUndoDelete() : UndoBlock
- {
- // Must be overriden!
- return null;
- }
- */
 AnimatedObject.prototype.identifier = function()
 {
 	return this.objectID;

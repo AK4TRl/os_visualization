@@ -137,21 +137,21 @@ function timeout()
     animationManager.update();
     objectManager.draw();
 }
-function doPlayPause()
-{
+function doPlayPause() {
     paused = !paused;
-    if (paused)
-    {
-        playPauseBackButton.setAttribute("value", "play");
-        if (skipBackButton.disabled == false)
-        {
+    if (paused) {
+        var task = "\u7ee7\u7eed";
+        task = reconvert(task);
+        playPauseBackButton.setAttribute("value", task);
+        if (skipBackButton.disabled == false) {
             stepBackButton.disabled = false;
         }
 
     }
-    else
-    {
-        playPauseBackButton.setAttribute("value", "pause");
+    else {
+        var task = "\u6682\u505c";
+        task = reconvert(task);
+        playPauseBackButton.setAttribute("value", task);
     }
     animationManager.SetPaused(paused);
 }
@@ -188,15 +188,25 @@ function initCanvas(dataType)
     objectManager = new ObjectManager();
     animationManager = new AnimationManager(objectManager);
 
-    skipBackButton = addControlToAnimationBar("Button", "Skip Back");
+    var task1 = "\u5411\u524d\u8df3";
+    task1 = reconvert(task1);
+    var task2 = "\u540e\u9000\u4e00\u6b65";
+    task2 = reconvert(task2);
+    var task3 = "\u6682\u505c";
+    task3 = reconvert(task3);
+    var task4 = "\u524d\u8fdb\u4e00\u6b65";
+    task4 = reconvert(task4);
+    var task5 = "\u8df3\u5230\u6700\u540e";
+    task5 = reconvert(task5);
+    skipBackButton = addControlToAnimationBar("Button", task1);
     skipBackButton.onclick = animationManager.skipBack.bind(animationManager);
-    stepBackButton = addControlToAnimationBar("Button", "Step Back");
+    stepBackButton = addControlToAnimationBar("Button", task2);
     stepBackButton.onclick = animationManager.stepBack.bind(animationManager);
-    playPauseBackButton = addControlToAnimationBar("Button", "Pause");
+    playPauseBackButton = addControlToAnimationBar("Button", task3);
     playPauseBackButton.onclick = doPlayPause ;
-    stepForwardButton = addControlToAnimationBar("Button", "Step Forward");
+    stepForwardButton = addControlToAnimationBar("Button", task4);
     stepForwardButton.onclick = animationManager.step.bind(animationManager) ;
-    skipForwardButton = addControlToAnimationBar("Button", "Skip Forward");
+    skipForwardButton = addControlToAnimationBar("Button", task5);
     skipForwardButton.onclick = animationManager.skipForward.bind(animationManager);
 
 
@@ -267,52 +277,6 @@ function initCanvas(dataType)
     animationManager.SetSpeed(speed);
 
     element.setAttribute("style", "width:200px");
-
-
-
-    var width=getCookie("VisualizationWidth");
-    if (width == null || width == "")
-    {
-        width = canvas.width;
-    }
-    else
-    {
-        width = parseInt(width);
-    }
-    var height=getCookie("VisualizationHeight");
-    if (height == null || height == "")
-    {
-        height = canvas.height;
-    }
-    else
-    {
-        height = parseInt(height);
-    }
-
-    var swappedControls=getCookie("VisualizationControlSwapped");
-    swapped = swappedControls == "true"
-    if (swapped)
-    {
-        reorderSibling(document.getElementById('canvas'), document.getElementById('generalAnimationControlSection'));
-    }
-
-    canvas.width = width;
-    canvas.height = height;
-
-
-    tableEntry = document.createElement("td");
-    txtNode = document.createTextNode("       h:");
-    tableEntry.appendChild(txtNode);
-    controlBar.appendChild(tableEntry);
-
-    heightEntry = addControlToAnimationBar("Text", canvas.height);
-    heightEntry.onkeydown = this.returnSubmit(heightEntry, animationManager.changeSize.bind(animationManager), 4, true);
-
-//	heightEntry.size = 4;
-    sizeButton = addControlToAnimationBar("Button", "Change Canvas Size");
-
-    sizeButton.onclick = animationManager.changeSize.bind(animationManager) ;
-
 
     animationManager.addListener("AnimationStarted", this, animStarted);
     animationManager.addListener("AnimationEnded", this, this.animEnded);
@@ -415,32 +379,6 @@ function AnimationManager(objectManager)
         }
     }
 
-
-    this.changeSize = function()
-    {
-
-        var width = parseInt(widthEntry.value);
-        var height = parseInt(heightEntry.value);
-
-        if (width > 100)
-        {
-            canvas.width = width;
-            this.animatedObjects.width = width;
-            setCookie("VisualizationWidth", String(width), 30);
-
-        }
-        if (height > 100)
-        {
-            canvas.height = height;
-            this.animatedObjects.height = height;
-            setCookie("VisualizationHeight", String(height), 30);
-        }
-        width.value = canvas.width;
-        heightEntry.value = canvas.height;
-
-        this.animatedObjects.draw();
-        this.fireEvent("CanvasSizeChanged",{width:canvas.width, height:canvas.height});
-    }
 
     this.startNextBlock = function()
     {
@@ -945,7 +883,6 @@ function AnimationManager(objectManager)
             // so to be safe we'll kill it and start it again.
             clearTimeout(timer);
             timer = setTimeout('timeout()', 30);
-            console.log("the timer is :  " + timer);
         }
 
     }
@@ -1053,7 +990,6 @@ function AnimationManager(objectManager)
                         this.currentBlock[i].toX,
                         this.currentBlock[i].toY);
                 }
-
             }
             this.animatedObjects.update();
             this.currentlyAnimating = false;
@@ -1074,11 +1010,10 @@ function AnimationManager(objectManager)
         for (var i = undoBlock.length - 1; i >= 0; i--)
         {
             undoBlock[i].undoInitialStep(this.animatedObjects);
-
         }
         this.doingUndo = false;
 
-        // If we are at the final end of the animation ...
+        //如果到了动画最后一步
         if (this.undoAnimationStepIndices.length == 0)
         {
             this.awaitingStep = false;
@@ -1098,7 +1033,6 @@ function AnimationManager(objectManager)
             clearTimeout(timer);
             this.animatedObjects.update();
             this.animatedObjects.draw();
-
 
             return false;
         }
@@ -1164,7 +1098,6 @@ function AnimationManager(objectManager)
 
     this.update = function()
     {
-
         if (this.currentlyAnimating)
         {
             this.currFrame = this.currFrame + 1;
@@ -1205,6 +1138,7 @@ function AnimationManager(objectManager)
                 {
                     if (this.animationPaused && (this.currentAnimation < this.AnimationSteps.length))
                     {
+
                         this.awaitingStep = true;
                         this.fireEvent("AnimationWaiting","NoData");
                         this.currentBlock = [];
@@ -1216,12 +1150,21 @@ function AnimationManager(objectManager)
                 }
             }
             this.animatedObjects.update();
-
         }
-
-
     }
+}
 
+function reconvert(str){
+    str = str.replace(/(\\u)(\w{1,4})/gi,function($0){
+        return (String.fromCharCode(parseInt((escape($0).replace(/(%5Cu)(\w{1,4})/g,"$2")),16)));
+    });
+    str = str.replace(/(&#x)(\w{1,4});/gi,function($0){
+        return String.fromCharCode(parseInt(escape($0).replace(/(%26%23x)(\w{1,4})(%3B)/g,"$2"),16));
+    });
+    str = str.replace(/(&#)(\d{1,6});/gi,function($0){
+        return String.fromCharCode(parseInt(escape($0).replace(/(%26%23)(\d{1,6})(%3B)/g,"$2")));
+    });
+    return str;
 }
 
 AnimationManager.prototype = new EventListener();

@@ -86,10 +86,11 @@ ProcessScheduling.prototype.init = function (am, w, h) {
     this.addControls();
     this.nextIndex = 0;
     this.setArraySize();
-    this.readyTime = new Array(100);
+    this.readyTime = new Array(10);
     this.processNameIndex = new Array(100);
-    this.ServerTime = new Array(100);
-    this.priority = new Array(100);
+    this.ServerTime = new Array(10);
+    this.priority = new Array(10);
+
     //create random visual objects
     this.createVisualObjects();
 }
@@ -173,27 +174,39 @@ ProcessScheduling.prototype.createVisualObjects = function(){
 ProcessScheduling.prototype.addControls = function () {
 
     //返回主页
-    this.returnButton = addControlToAlgorithmBar("Button", "Return");
+    var task1 = "\u8fd4\u56de";
+    task1 = reconvert(task1);
+    this.returnButton = addControlToAlgorithmBar("Button", task1);
     this.returnButton.onclick = this.returnCallback.bind(this);
 
     //先到先服务算法（FCFS）
-    this.fcfsButton = addControlToAlgorithmBar("Button", "FCFS");
+    var task2 = "\u5148\u5230\u5148\u670d\u52a1\u7b97\u6cd5";
+    task2 = reconvert(task2);
+    this.fcfsButton = addControlToAlgorithmBar("Button", task2);
     this.fcfsButton.onclick = this.fcfsCallback.bind(this);
 
     //短作业优先算法（SJF）
-    this.sjfButton = addControlToAlgorithmBar("Button","SJF");
+    var task3 = "\u77ed\u4f5c\u4e1a\u4f18\u5148\u7b97\u6cd5";
+    task3 = reconvert(task3);
+    this.sjfButton = addControlToAlgorithmBar("Button",task3);
     this.sjfButton.onclick = this.sjfCallback.bind(this);
 
     //优先级调度算法（PSA）
-    this.psaButton = addControlToAlgorithmBar("Button","PSA");
+    var task4 = "\u4f18\u5148\u7ea7\u8c03\u5ea6\u7b97\u6cd5";
+    task4 = reconvert(task4);
+    this.psaButton = addControlToAlgorithmBar("Button",task4);
     this.psaButton.onclick = this.psaCallback.bind(this);
 
     //高响应比优先调度算法（HRRN）
-    this.hrrnButton = addControlToAlgorithmBar("Button","HRRN");
+    var task5 = "\u9ad8\u54cd\u5e94\u6bd4\u4f18\u5148\u8c03\u5ea6\u7b97\u6cd5";
+    task5 = reconvert(task5);
+    this.hrrnButton = addControlToAlgorithmBar("Button",task5);
     this.hrrnButton.onclick = this.hrrnCallback.bind(this);
 
     //轮转调度算法（RR）
-    this.rrButton = addControlToAlgorithmBar("Button","RR");
+    var task6 = "\u8f6e\u8f6c\u8c03\u5ea6\u7b97\u6cd5";
+    task6 = reconvert(task6);
+    this.rrButton = addControlToAlgorithmBar("Button",task6);
     this.rrButton.onclick = this.rrCallback.bind(this);
 }
 
@@ -208,19 +221,34 @@ ProcessScheduling.prototype.returnCallback = function (option) {
 ProcessScheduling.prototype.fcfsCallback = function (option) {
     Process = [];
     this.randomizeArray(1);
+
+    var task1 = "\u5148\u6765\u5148\u670d\u52a1\u7b97\u6cd5\u5f00\u59cb";
+    task1 = reconvert(task1);
     var f = document.getElementById("GeneralAnimationControls");
     var childs = f.childNodes;
-    if(f.getElementsByTagName("td").length < 12) {
-        this.fcfsStartButton = addControlToAnimationBar("Button", "fcfsStart");
+    if(f.getElementsByTagName("td").length < 9) {
+        this.fcfsStartButton = addControlToAnimationBar("Button", task1);
         this.fcfsStartButton.onclick = this.fcfsStartButtonCallback.bind(this);
     }
     else {
         f.removeChild(childs[parseInt(f.getElementsByTagName("td").length-2)]);
-        this.fcfsStartButton = addControlToAnimationBar("Button", "fcfsStart");
+        this.fcfsStartButton = addControlToAnimationBar("Button", task1);
         this.fcfsStartButton.onclick = this.fcfsStartButtonCallback.bind(this);
     }
-    addLabelToAlgorithmBar("Hello, everyone. Please allow me to introduce myself. I am a student of grade five. My favourite subject is English. I have some good friends and we go to school together. I like to make friends. Would you like to make friends with me?");
-    addLabelToAlgorithmBar("label 3");
+    var description = "\u5148\u6765\u5148\u670d\u52a1\u8c03\u5ea6\u7b97\u6cd5\u662f" +
+        "\u4e00\u79cd\u6700\u7b80\u5355\u7684\u65b9\u6cd5\uff0c\u7cfb\u7edf\u7ef4\u62a4" +
+        "\u4e00\u4e2a\u0046\u0049\u0046\u004f\u961f\u5217\uff0c\u6309\u7167\u8fdb\u7a0b" +
+        "\u5230\u8fbe\u5c31\u7eea\u961f\u5217\u7684\u5148\u540e\u6b21\u5e8f\u987a\u5e8f" +
+        "\u8c03\u5ea6\u8fd0\u884c\u3002";
+    description = reconvert(description);
+    var p = "\u0031\u002e\u6309\u5347\u5e8f\u6392\u5217\u5c31\u7eea\u65f6\u95f4";
+    p = reconvert(p);
+    var p2 = "\u0032\u002e\u540e\u6765\u7684\u6309\u5230\u8fbe\u65f6\u95f4\u7684\u5148" +
+        "\u540e\u6392\u5728\u5c31\u7eea\u961f\u5217\u4e0a\uff0c\u6bcf\u6b21\u53d6\u961f" +
+        "\u9996\u5143\u7d20\u8fd0\u884c\u3002";
+    p2 = reconvert(p2);
+    addLabelToAlgorithmBar(description);
+    addLabelToAlgorithmBar(p+"\n"+p2);
 
     return this.commands;
 }
@@ -229,139 +257,95 @@ ProcessScheduling.prototype.fcfsStartButtonCallback = function (option) {
 }
 //先来先服务算法实现过程
 ProcessScheduling.prototype.fcfs = function(value) {
+
     //this.point=value;    //后移的指针
     this.animationManager.clearHistory();
     this.commands = new Array();
+    var tmpProcess;
+
     //先排序
     //
     Process.sort(by('readyTime',by('ServerTime')));
-    var smallestIndex = 1;
-    var panding = 0, IndexToContinue = 0, flagIndex = 0;
-    var endTime = 0;
-    var tmpProcess = new Array();
-    while(panding < this.array_size){
-        var minnRDT = 999, theMinnNum = 0;
-        this.recordProcess = new Array();
-        for (var i = 0; i < this.array_size; ++i)
-        {
-            //this.cmd("SetForegroundColor", this.barLabels[smallestIndex], HIGHLIGHT_BAR_COLOR);
-            if(this.readyTime[i] != " ") {
-                this.cmd("SetBackgroundColor", this.barObjects[i] - 12, HIGHLIGHT_BAR_BACKGROUND_COLOR);
-                this.cmd("Step");
+    this.recordProcess = new Array();
+    this.recordProcess = Process.slice(0, Process.length);
+    var FinishTime = -1;                                //上一个作业的完成时间
+
+    for (var i = 0; i < this.recordProcess.length; ++i)
+    {
+        if(this.recordProcess[i].readyTime < FinishTime) //没有作业正在运行，取队首作业运行
+            this.recordProcess[i].FinishTime = this.recordProcess[i - 1].FinishTime + this.recordProcess[i].ServerTime;
+        else                                  //有作业正在运行，等待作业完毕，此作业再运行
+            this.recordProcess[i].FinishTime = this.recordProcess[i].readyTime + this.recordProcess[i].ServerTime;
+
+        this.recordProcess[i].TurnoverTime = this.recordProcess[i].FinishTime - this.recordProcess[i].readyTime;
+        this.recordProcess[i].WeightedTurnoverTime = (this.recordProcess[i].TurnoverTime / this.recordProcess[i].ServerTime).toFixed(2);
+        FinishTime = this.recordProcess[i].FinishTime;
+    }
+    tmpProcess = [0,1,2,3,4,5,6,7,8,9,10,11];
+    for(var i = 0; i < this.recordProcess.length; ++i)
+    {
+        this.cmd("SetBackgroundColor", this.recordProcess[i].pid * 16 + 2, HIGHLIGHT_BAR_BACKGROUND_COLOR);
+        this.cmd("Step");
+        this.cmd("SetBackgroundColor", this.recordProcess[i].pid * 16 + 2, "#fff");
+        this.cmd("SetBackgroundColor", this.recordProcess[i].pid * 16 + 4, HIGHLIGHT_BAR_BACKGROUND_COLOR);
+        this.cmd("Step");
+        //开始时间
+        this.cmd("SetBackgroundColor", this.recordProcess[i].pid * 16 + 4, "#fff");
+        this.cmd("SetBackgroundColor", this.recordProcess[i].pid * 16 + 8, HIGHLIGHT_BAR_BACKGROUND_COLOR);
+        this.cmd("SetText", this.recordProcess[i].pid * 16 + 9, this.recordProcess[i].FinishTime - this.recordProcess[i].ServerTime);
+        this.cmd("Step");
+        //结束时间
+        this.cmd("SetBackgroundColor", this.recordProcess[i].pid * 16 + 8, "#fff");
+        this.cmd("SetBackgroundColor", this.recordProcess[i].pid * 16 + 10, HIGHLIGHT_BAR_BACKGROUND_COLOR);
+        this.cmd("SetText", this.recordProcess[i].pid * 16 + 11, this.recordProcess[i].FinishTime);
+        this.cmd("Step");
+        //周转时间
+        this.cmd("SetBackgroundColor", this.recordProcess[i].pid * 16 + 10, "#fff");
+        this.cmd("SetBackgroundColor", this.recordProcess[i].pid * 16 + 12, HIGHLIGHT_BAR_BACKGROUND_COLOR);
+        this.cmd("SetText", this.recordProcess[i].pid * 16 + 13, this.recordProcess[i].TurnoverTime);
+        this.cmd("Step");
+        //带权周转时间
+        this.cmd("SetBackgroundColor", this.recordProcess[i].pid * 16 + 12, "#fff");
+        this.cmd("SetBackgroundColor", this.recordProcess[i].pid * 16 + 14, HIGHLIGHT_BAR_BACKGROUND_COLOR);
+        this.cmd("SetText", this.recordProcess[i].pid * 16 + 15, this.recordProcess[i].WeightedTurnoverTime);
+        this.cmd("Step");
+        this.cmd("SetBackgroundColor", this.recordProcess[i].pid * 16 + 14, "#fff");
+        /*---依次移动到顶端----*/
+        for(var j = 0; j <= 14; j += 2){
+            this.cmd("SetBackgroundColor", this.recordProcess[i].pid * 16 + j, HIGHLIGHT_BAR_BACKGROUND_COLOR);
+        }
+
+        for(var j = 0; j <= 14; j += 2) {
+            this.cmd("Move", this.recordProcess[i].pid * 16 + j, this.array_width * (j / 2 + 1), this.barPositionsY[i]);
+            this.cmd("Move", this.recordProcess[i].pid * 16 + 1 + j, this.array_width * (j / 2 + 1), this.barPositionsY[i] - 25);
+        }
+
+        var tmpIndex, tmp;
+        for(var j = 1; j < 11; ++j){
+            if(tmpProcess[j] == this.recordProcess[i].pid){
+                tmpIndex = j;
+                break;
             }
-            if (minnRDT >= this.readyTime[i] && this.readyTime[i] != " ") {
-                this.cmd("SetBackgroundColor", this.barObjects[flagIndex] - 12, "#fff");
-                //console.log(minnRDT + " " + Process[i].readyTime + " " + i);
-                //console.log(this.barObjects[flagIndex] - 12);
-                this.cmd("SetBackgroundColor", this.barObjects[i] - 12, HIGHLIGHT_BAR_BACKGROUND_COLOR);
-                flagIndex = i;
-                minnRDT = this.readyTime[i];
-                tmpProcess[theMinnNum++] = i;
-            }
-            else
-                this.cmd("SetBackgroundColor", this.barObjects[i] - 12, "#fff");
-            /*if(minnRDT == Process[i].readyTime){
-             //
-             ChangeOrNot = true;
-             this.recordProcess[theSameNum++] = i;
-             this.cmd("SetBackgroundColor", this.barObjects[i] - 12, HIGHLIGHT_BAR_BACKGROUND_COLOR);
-             }*/
-            //this.cmd("move", this.barObjects[i] - 12, 160 , 150,320,200);
-            //this.cmd("SetBackgroundColor", this.barObjects[i]-12, "#fff");
-            smallestIndex += 8;
+        }
+
+        for(var j = 0; j <= 14; j += 2) {
+            this.cmd("Move", (tmpProcess[i + 1]) * 16 + j, this.array_width * (j / 2 + 1), this.barPositionsY[tmpIndex - 1]);
+            this.cmd("Move", (tmpProcess[i + 1]) * 16 + 1 + j, this.array_width *(j / 2 + 1), this.barPositionsY[tmpIndex - 1] - 25);
         }
         this.cmd("Step");
-        var theSameNum = 0;
-        for (var j = tmpProcess.length - 1; j >= 0; j--) {
-            if (this.readyTime[tmpProcess[j]] == minnRDT) {
-                this.recordProcess[theSameNum++] = tmpProcess[j];
-                this.readyTime[tmpProcess[j]] = " ";
-            }
-        }
-        panding += theSameNum;
-        console.log(Process);
-        //console.log(this.commands);
-        console.log("thesame num: " + theSameNum);
-        if (theSameNum > 1) {
-            this.cmd("SetBackgroundColor", this.barObjects[flagIndex] - 12, "#fff");
-            var i;
-            for (i = IndexToContinue; i < (IndexToContinue + theSameNum); ++i) {
-                //
-                this.cmd("SetBackgroundColor", Process[i].pid * 16, HIGHLIGHT_BAR_BACKGROUND_COLOR);
-                this.cmd("SetBackgroundColor", Process[i].pid * 16 + 2, HIGHLIGHT_BAR_BACKGROUND_COLOR);
-                this.cmd("SetBackgroundColor", Process[i].pid * 16 + 4, HIGHLIGHT_BAR_BACKGROUND_COLOR);
-                this.cmd("SetBackgroundColor", Process[i].pid * 16 + 6, HIGHLIGHT_BAR_BACKGROUND_COLOR);
-                this.cmd("SetBackgroundColor", Process[i].pid * 16 + 8, HIGHLIGHT_BAR_BACKGROUND_COLOR);
-                this.cmd("SetBackgroundColor", Process[i].pid * 16 + 10, HIGHLIGHT_BAR_BACKGROUND_COLOR);
-                this.cmd("SetBackgroundColor", Process[i].pid * 16 + 12, HIGHLIGHT_BAR_BACKGROUND_COLOR);
-                this.cmd("SetBackgroundColor", Process[i].pid * 16 + 14, HIGHLIGHT_BAR_BACKGROUND_COLOR);
-                this.cmd("Step");
-            }
-            for (i = IndexToContinue; i < (IndexToContinue + theSameNum); ++i) {
-                //
-                this.cmd("SetBackgroundColor", Process[i].pid * 16, "#fff");
-                this.cmd("SetBackgroundColor", Process[i].pid * 16 + 2, "#fff");
-                this.cmd("SetBackgroundColor", Process[i].pid * 16 + 4, "#fff");
-                this.cmd("SetBackgroundColor", Process[i].pid * 16 + 6, "#fff");
-                this.cmd("SetBackgroundColor", Process[i].pid * 16 + 8, "#fff");
-                this.cmd("SetBackgroundColor", Process[i].pid * 16 + 10, "#fff");
-                this.cmd("SetBackgroundColor", Process[i].pid * 16 + 12, "#fff");
-                this.cmd("SetBackgroundColor", Process[i].pid * 16 + 14, "#fff");
-            }
-            for (i = IndexToContinue; i < (IndexToContinue + theSameNum); ++i) {
-                if(endTime < Process[i].readyTime)
-                    endTime = Process[i].readyTime;
-                //开始时间
-                this.cmd("SetBackgroundColor", Process[i].pid * 16 + 2, "#fff");
-                this.cmd("SetBackgroundColor", Process[i].pid * 16 + 8, HIGHLIGHT_BAR_BACKGROUND_COLOR);
-                this.cmd("SetText", Process[i].pid * 16 + 9, endTime);
-                this.cmd("Step");
-                //结束时间
-                endTime += Process[i].ServerTime
-                this.cmd("SetBackgroundColor", Process[i].pid * 16 + 8, "#fff");
-                this.cmd("SetBackgroundColor", Process[i].pid * 16 + 10, HIGHLIGHT_BAR_BACKGROUND_COLOR);
-                this.cmd("SetText", Process[i].pid * 16 + 11, endTime);
-                this.cmd("Step");
-                //周转时间
-                this.cmd("SetBackgroundColor", Process[i].pid * 16 + 10, "#fff");
-                this.cmd("SetBackgroundColor", Process[i].pid * 16 + 12, HIGHLIGHT_BAR_BACKGROUND_COLOR);
-                this.cmd("SetText", Process[i].pid * 16 + 13, endTime - Process[i].readyTime);
-                this.cmd("Step");
-                //带权周转时间
-                this.cmd("SetBackgroundColor", Process[i].pid * 16 + 12, "#fff");
-                this.cmd("SetBackgroundColor", Process[i].pid * 16 + 14, HIGHLIGHT_BAR_BACKGROUND_COLOR);
-                this.cmd("SetText", Process[i].pid * 16 + 15, ((endTime - Process[i].readyTime)/endTime).toFixed(2));
-                this.cmd("SetBackgroundColor", Process[i].pid * 16 + 14, "#fff");
-                this.cmd("Step");
-            }
-            IndexToContinue = i;
-        }
-        else {
-            if(endTime < Process[IndexToContinue].readyTime)
-                endTime = Process[IndexToContinue].readyTime;
-            //开始时间
-            this.cmd("SetBackgroundColor", Process[IndexToContinue].pid * 16 + 2, "#fff");
-            this.cmd("SetBackgroundColor", Process[IndexToContinue].pid * 16 + 8, HIGHLIGHT_BAR_BACKGROUND_COLOR);
-            this.cmd("SetText", Process[IndexToContinue].pid * 16 + 9, endTime);
-            this.cmd("Step");
-            //结束时间
-            endTime += Process[IndexToContinue].ServerTime
-            this.cmd("SetBackgroundColor", Process[IndexToContinue].pid * 16 + 8, "#fff");
-            this.cmd("SetBackgroundColor", Process[IndexToContinue].pid * 16 + 10, HIGHLIGHT_BAR_BACKGROUND_COLOR);
-            this.cmd("SetText", Process[IndexToContinue].pid * 16 + 11, endTime);
-            this.cmd("Step");
-            //周转时间
-            this.cmd("SetBackgroundColor", Process[IndexToContinue].pid * 16 + 10, "#fff");
-            this.cmd("SetBackgroundColor", Process[IndexToContinue].pid * 16 + 12, HIGHLIGHT_BAR_BACKGROUND_COLOR);
-            this.cmd("SetText", Process[IndexToContinue].pid * 16 + 13, endTime - Process[IndexToContinue].readyTime);
-            this.cmd("Step");
-            //带权周转时间
-            this.cmd("SetBackgroundColor", Process[IndexToContinue].pid * 16 + 12, "#fff");
-            this.cmd("SetBackgroundColor", Process[IndexToContinue].pid * 16 + 14, HIGHLIGHT_BAR_BACKGROUND_COLOR);
-            this.cmd("SetText", Process[IndexToContinue].pid * 16 + 15, ((endTime - Process[IndexToContinue].readyTime)/Process[IndexToContinue].ServerTime).toFixed(2));
-            this.cmd("SetBackgroundColor", Process[IndexToContinue].pid * 16 + 14, "#fff");
-            this.cmd("Step");
-            IndexToContinue++;
+
+        tmp = tmpProcess[i + 1];
+        tmpProcess[i + 1] = tmpProcess[tmpIndex];
+        tmpProcess[tmpIndex] = tmp;
+    }
+    console.log(tmpProcess);
+    console.log(this.recordProcess);
+    this.cmd("Step");
+    for(var i = 0; i < this.recordProcess.length; ++i)
+    {
+        for(var j = 0; j <= 14; j += 2)
+        {
+            this.cmd("SetBackgroundColor", this.recordProcess[i].pid * 16 + j, "#fff");
         }
     }
 
@@ -379,7 +363,7 @@ ProcessScheduling.prototype.sjfCallback = function (option) {
     this.randomizeArray(2);
     var f = document.getElementById("GeneralAnimationControls");
     var childs = f.childNodes;
-    if(f.getElementsByTagName("td").length < 12) {
+    if(f.getElementsByTagName("td").length < 9) {
         this.sjfStartButton = addControlToAnimationBar("Button", "sjfStart");
         this.sjfStartButton.onclick = this.sjfStarttButtonCallback.bind(this);
     }
@@ -388,7 +372,9 @@ ProcessScheduling.prototype.sjfCallback = function (option) {
         this.sjfStartButton = addControlToAnimationBar("Button", "sjfStart");
         this.sjfStartButton.onclick = this.sjfStarttButtonCallback.bind(this);
     }
-    addLabelToAlgorithmBar("label 1");
+    var sjfdescription = "\u6700\u77ed\u4f5c\u4e1a\u4f18\u5148\u8c03\u5ea6\u6cd5\u8981\u6c42\u6bcf\u4e2a\u4f5c\u4e1a\u7684\u8fdb\u7a0b\u63d0\u4f9b\u6240\u9700\u7684\u8fd0\u884c\u65f6\u95f4\uff0c\u6bcf\u6b21\u8c03\u5ea6\u4e8b\u603b\u662f\u9009\u53d6\u8fd0\u884c\u65f6\u95f4\u6700\u77ed\u7684\u8fdb\u7a0b\u8fd0\u884c\u3002\u8fd9\u79cd\u7b97\u6cd5\u5bf9\u4e8e\u8fd0\u884c\u65f6\u95f4\u77ed\u7684\u8fdb\u7a0b\u6709\u5229\uff0c\u8fdb\u7a0b\u7684\u5e73\u5747\u7b49\u5f85\u548c\u5468\u8f6c\u65f6\u95f4\u6700\u4f73\u3002";
+    sjfdescription = reconvert(sjfdescription);
+    addLabelToAlgorithmBar(sjfdescription);
     addLabelToAlgorithmBar("label 2");
 }
 ProcessScheduling.prototype.sjfStarttButtonCallback = function (option) {
@@ -514,7 +500,7 @@ ProcessScheduling.prototype.psaCallback = function (option) {
     this.randomizeArray(3);
     var f = document.getElementById("GeneralAnimationControls");
     var childs = f.childNodes;
-    if(f.getElementsByTagName("td").length < 12) {
+    if(f.getElementsByTagName("td").length < 9) {
         this.psaStartButton = addControlToAnimationBar("Button", "psaStart");
         this.psaStartButton.onclick = this.psaStarttButtonCallback.bind(this);
     }
@@ -523,7 +509,9 @@ ProcessScheduling.prototype.psaCallback = function (option) {
         this.psaStartButton = addControlToAnimationBar("Button", "psaStart");
         this.psaStartButton.onclick = this.psaStarttButtonCallback.bind(this);
     }
-    addLabelToAlgorithmBar("label 3");
+    var psadescription = "\u4f5c\u4e3a\u6700\u5e38\u7528\u7684\u4e00\u79cd\u8c03\u5ea6\u65b9\u6cd5\uff0c\u7cfb\u7edf\u603b\u662f\u5c06\u0043\u0050\u0055\u5206\u914d\u7ed9\u5c31\u7eea\u961f\u5217\u4e2d\u4f18\u5148\u7ea7\u6700\u9ad8\u7684\u8fdb\u7a0b\u3002";
+    psadescription = reconvert(psadescription);
+    addLabelToAlgorithmBar(psadescription);
     addLabelToAlgorithmBar("label 4");
 }
 ProcessScheduling.prototype.psaStarttButtonCallback = function (option) {
@@ -647,7 +635,7 @@ ProcessScheduling.prototype.hrrnCallback = function (option) {
     this.randomizeArray(4);
     var f = document.getElementById("GeneralAnimationControls");
     var childs = f.childNodes;
-    if(f.getElementsByTagName("td").length < 12) {
+    if(f.getElementsByTagName("td").length < 9) {
         this.hrrnStartButton = addControlToAnimationBar("Button", "hrrnStart");
         this.hrrnStartButton.onclick = this.hrrnStarttButtonCallback.bind(this);
     }
@@ -797,7 +785,7 @@ ProcessScheduling.prototype.rrCallback = function (option) {
     this.randomizeArray(5);
     var f = document.getElementById("GeneralAnimationControls");
     var childs = f.childNodes;
-    if(f.getElementsByTagName("td").length < 12) {
+    if(f.getElementsByTagName("td").length < 9) {
         this.rrStartButton = addControlToAnimationBar("Button", "rrStart");
         this.rrStartButton.onclick = this.rrStarttButtonCallback.bind(this);
     }
@@ -817,24 +805,28 @@ ProcessScheduling.prototype.rr = function (value) {
     this.commands = new Array();
 
     var tmpProcess = new Array();
-    var timeslice = 20;
+    var timeslice = 5;//时间片
     Process.sort(by('readyTime'));
     for(var i = 0; i < Process.length; ++i){
         tmpProcess.unshift(Process[i]);
     }
-    console.log(tmpProcess);
 
     var result = new Array(), Ready = new Array();
     var BeginTime = tmpProcess[tmpProcess.length - 1].readyTime;
     Ready.unshift(tmpProcess[tmpProcess.length - 1]);
     tmpProcess.pop();
-    console.log(tmpProcess);
-    while (tmpProcess.length != 0 || !Ready.empty())
+    console.log(Process);
+
+    while (tmpProcess.length != 0 || Ready.length != 0)
     {
         if (tmpProcess.length != 0 && BeginTime >= tmpProcess[tmpProcess.length - 1].readyTime)    //有新作业到达，加入就绪队列
         {
-            Ready.unshift(tmpProcess[tmpProcess.length - 1]);
+            Ready.push(tmpProcess[tmpProcess.length - 1]);
             tmpProcess.pop();
+        }
+        else if(Ready.length == 0 && tmpProcess.length != 0 && BeginTime < tmpProcess[tmpProcess.length - 1].readyTime){
+            BeginTime = tmpProcess[tmpProcess.length - 1].readyTime;
+            continue;
         }
         if (Ready[Ready.length - 1].FinishTime + timeslice < Ready[Ready.length - 1].ServerTime)     //时间片用完没运行完,加入队尾
         {
@@ -845,7 +837,7 @@ ProcessScheduling.prototype.rr = function (value) {
         }
         else        //此作业运行完
         {
-            BeginTime += Ready[Ready.length - 1].ServerTime - Ready[Ready.length - 1].FinishTime;
+            BeginTime += (Ready[Ready.length - 1].ServerTime - Ready[Ready.length - 1].FinishTime);
             Ready[Ready.length - 1].FinishTime = BeginTime;
             Ready[Ready.length - 1].TurnoverTime = Ready[Ready.length - 1].FinishTime - Ready[Ready.length - 1].readyTime;
             Ready[Ready.length - 1].WeightedTurnoverTime = (parseFloat(Ready[Ready.length - 1].TurnoverTime) / parseFloat(Ready[Ready.length - 1].ServerTime)).toFixed(2);
@@ -855,12 +847,13 @@ ProcessScheduling.prototype.rr = function (value) {
             Ready.pop();
         }
     }
+    console.log(tmpProcess);
+    console.log(result);
 
     return this.commands ;
 }
 //////////////////////////////////////////////////////////////////////RR-end//////////////////////////////////////////////////////////////////////
 //***
-
 
 
 //Unicode转码
@@ -906,15 +899,22 @@ ProcessScheduling.prototype.randomizeArray = function (type) {
     this.cmd("SetText",this.barLabels[labelCount++],runningtime);
     this.cmd("SetText",this.barLabels[labelCount++],rtv);
 
+    if(type == 1) {
+        this.readyTime = createRandomArr(10, 1, 30);
+    }
+
     for(var i = 0; i < this.array_size; ++i){
         var item = {};
-        this.readyTime[i] = Math.floor(1 + Math.random()*30);
+
+        if(type != 1)
+            this.readyTime[i] = Math.floor(1 + Math.random() * 30);
         this.ServerTime[i] = Math.floor(1 + Math.random()*10);
         this.priority[i] = Math.floor(1 + Math.random()*5);
         item.pid = i + 1;
         item.readyTime = this.readyTime[i];
         item.ServerTime = this.ServerTime[i];
         item.priority = this.priority[i];
+        item.FinishTime = 0;
         item.level = 0;
         Process.push(item);
         for(var j = 0; j < 8; ++j) {
@@ -931,6 +931,7 @@ ProcessScheduling.prototype.randomizeArray = function (type) {
         }
         //this.cmd("SetHeight", this.barObjects[i], this.arrayData[i] * SCALE_FACTOR);
     }
+    console.log(this.readyTime);
     if(type == 1)
     {
         this.cmd("SetText", this.theStaus, "u are in the FCFS section.");
@@ -973,3 +974,15 @@ ProcessScheduling.prototype.setArraySize = function () {
     this.showLabels = true;
 }
 
+//随机不重复数组
+function createRandomArr(l, st, ed){
+    var r = [];
+    var o = {};
+    var a;
+    for (var i = 0;i < l;i++){
+        a = Math.floor(st + Math.random()*ed);
+        o[a] ? i-- : (r.push(a),o[a] = true);
+    }
+
+    return r;
+}

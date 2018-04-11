@@ -9,9 +9,6 @@ var AnimatedCircle = function(objectID, objectLabel)
     this.alpha = 1.0;
     this.addedToScene = true;
     this.highlightIndex = -1;
-    /*	this.foregroundColor  = '#007700';
-     this.backgroundColor  = '#EEFFEE';
-     */
 }
 
 AnimatedCircle.prototype = new AnimatedObject();
@@ -143,12 +140,10 @@ AnimatedCircle.prototype.draw = function(ctx)
 
 }
 
-
 AnimatedCircle.prototype.createUndoDelete = function()
 {
     return new UndoDeleteCircle(this.objectID, this.label, this.x, this.y, this.foregroundColor, this.backgroundColor, this.layer, this.radius);
 }
-
 
 function UndoDeleteCircle(id, lab, x, y, foregroundColor, backgroundColor, l, radius)
 {

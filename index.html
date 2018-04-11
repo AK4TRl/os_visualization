@@ -6,6 +6,8 @@
         Main Page
     </title>
 
+    <meta http-equiv="Content-Type" content="text/html; charset=gb2312">
+
     <!-- css sheet for how the page is laid out -->
     <link rel="stylesheet" href="visualizationPageStyle.css?v=100">
 
@@ -32,12 +34,12 @@
 <body onload="init();" class="VisualizationMainPage">
     <div id = "container">
         <div id="header">
-            <h1>Main</h1>
+            <div id="header_left"><h1>主页</h1></div>
         </div>
 
         <div id = "mainContent">
             <div id = "algoControlSection">
-                <div id="title">Type</div>
+                <div id="title">类型</div>
                 <!-- Table for buttons to control specific animation (insert/find/etc) -->
                 <!-- (filled in by javascript code specific to the animtion) -->
                 <table cellspacing="0" id="AlgorithmSpecificControls"> </table>

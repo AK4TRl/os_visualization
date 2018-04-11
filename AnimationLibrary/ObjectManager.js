@@ -167,9 +167,6 @@ function ObjectManager()
 	}
 
 
-
-
-
 	this.setAllLayers = function(layers)
 	{
 		this.activeLayers = [];

@@ -252,43 +252,48 @@ Banker.prototype.addControls = function () {
     this.resetButton = addControlToAlgorithmBar("Button", "Reset");
     this.resetButton.onclick = this.resetCallback.bind(this);
 
-    //Available button
-    this.controls = [];
+    //可用资源按钮及文本框
     this.insertField = addBankerInput("Text", "Available",0);
-    this.controls.push(this.insertField);
-
-    this.insertButton = addBankerButton("Button", "Available");
+    var taska = "\u53ef\u7528\u8d44\u6e90\u8f93\u5165";
+    taska = reconvert(taska);
+    this.insertButton = addBankerButton("Button", taska);
     this.insertButton.onclick = this.insertCallback.bind(this);
-    this.controls.push(this.insertButton);
 
-    //P1-P5 Claim
+    //已有资源按钮及文本框
     this.ClaiminsertField = addBankerInput("Text", "Claim",1);
-    this.controls.push(this.ClaiminsertField);
-
-    this.ClaiminsertButton = addBankerButton("Button", "Claim");
+    var taskb = "\u5df2\u6709\u8d44\u6e90\u8f93\u5165";
+    taskb = reconvert(taskb);
+    this.ClaiminsertButton = addBankerButton("Button", taskb);
     this.ClaiminsertButton.onclick = this.ClaiminsertCallback.bind(this);
-    this.controls.push(this.ClaiminsertButton);
 
-    //  P1 - P5 Allocated
+    //需要资源按钮及文本框
     this.AllocatedinsertField = addBankerInput("Text", "Allocated",1);
-    this.controls.push(this.AllocatedinsertField);
-
-    this.AllocatedinsertButton = addBankerButton("Button", "Allocated");
+    var taskc = "\u9700\u8981\u8d44\u6e90\u8f93\u5165";
+    taskc = reconvert(taskc);
+    this.AllocatedinsertButton = addBankerButton("Button", taskc);
     this.AllocatedinsertButton.onclick = this.AllocatedinsertCallback.bind(this);
-    this.controls.push(this.AllocatedinsertButton);
 
-    //request
+    //请求资源按钮及文本框
     this.RequestinsertField = addBankerInput("Text", "Request",1);
-    this.controls.push(this.RequestinsertField);
-
-    this.RequestinsertButton = addBankerButton("Button", "Request");
+    var taskd = "\u8bf7\u6c42\u8d44\u6e90\u8f93\u5165";
+    taskd = reconvert(taskd);
+    this.RequestinsertButton = addBankerButton("Button", taskd);
     this.RequestinsertButton.onclick = this.RequestinsertCallback.bind(this);
-    this.controls.push(this.RequestinsertButton);
 
+    var task1 = "\u94f6\u884c\u5bb6\u7b97\u6cd5\u5f00\u59cb";
+    task1 = reconvert(task1);
     //start
-    this.BankerStartButton = addBankerButton("Button", "BankerStart");
-    this.BankerStartButton.onclick = this.BankerStartCallback.bind(this);
-    this.controls.push(this.BankerStartButton);
+    var f = document.getElementById("GeneralAnimationControls");
+    var childs = f.childNodes;
+    if(f.getElementsByTagName("td").length < 9) {
+        this.BankerStartButton = addControlToAnimationBar("Button", task1);
+        this.BankerStartButton.onclick = this.BankerStartCallback.bind(this);
+    }
+    else {
+        f.removeChild(childs[parseInt(f.getElementsByTagName("td").length-2)]);
+        this.BankerStartButton = addControlToAnimationBar("Button", task1);
+        this.BankerStartButton.onclick = this.BankerStartCallback.bind(this);
+    }
 }
 
 Banker.prototype.BankerStartCallback = function (event) {

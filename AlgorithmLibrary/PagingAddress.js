@@ -444,7 +444,6 @@ function reconvert(str){
 //random array info
 Page.prototype.randomizeArray = function () {
     this.commands = new Array()
-
     this.animationManager.StartNewAnimation(this.commands);
     // console.log(this.commands);
     this.animationManager.skipForward();

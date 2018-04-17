@@ -13,7 +13,6 @@ function addControlToAlgorithmBar(type, name) {
     element.className += "ctl"
     //console.log(element);
     var tableEntry = document.createElement("td");
-    tableEntry.style.display = "list-item";
     tableEntry.style.padding = "0px";
     tableEntry.appendChild(element);
     document.getElementById("AlgorithmSpecificControls").appendChild(tableEntry);

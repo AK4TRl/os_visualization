@@ -595,7 +595,6 @@ Banker.prototype.AvaliableinsertElement = function(insertedValue){
             this.cmd("SetText", this.barLabels[index + i], t[i]);
             this.theAvailableIndex.push(this.barLabels[index + i]);
         }
-        console.log(this.theAvailableIndex);
         this.Available.push({
             'R1': parseInt(t[0]),
             'R2': parseInt(t[1]),

@@ -9,6 +9,7 @@ body {
 }
 .VisualizationMainPage #mainContent {
 	/*padding: 0 20px; /* remember that padding is the space inside the div box and margin is the space outside the div box */
+	display:inline;
 	background: #FFF;
 	height: 100vh;
 }
@@ -18,9 +19,7 @@ body {
 	text-align: left; /* this overrides the text-align: center on the body element. */
 }
 .VisualizationMainPage #algoControlSection {
-	width:250px;
-	float: left;
-	height: 100vh;
+	width: 100%;
 	background: #333;
 	color:#000;
 }
@@ -38,7 +37,7 @@ body {
 	color: #949494;
 	cursor:pointer;
 	text-align: left;
-	width: 250px;
+	width: 210px;
 	line-height: 24px;
 	font-size: 18px;
 }
@@ -51,7 +50,6 @@ body {
 	background: #333;
 	color: #EAEAEA;
 	font-weight: bolder;
-	display: inline-block;
 	text-align: left;
 }
 .VisualizationMainPage #algoControlSection #AlgorithmIllustration div{
@@ -59,20 +57,22 @@ body {
 	line-height: 24px;
 }
 .VisualizationMainPage #generalAnimationControlSection {
+	display:inline;
 	background: #FFF;
 	color:#006600;
 }
 .VisualizationMainPage  #header {
 	background: #333;
+	width: 100%;
 	/*background: #006633; */
 	color:#fff;
-	padding: 0 10px 0 0;
+	padding: 0;
 }
   .VisualizationMainPage  #header #header_left{
 	  background: #FF6347;
 	  color:#fff;
 	  padding: 0 10px 0 20px;
-	  width: 220px;
+	  width: 200px;
   }
  
 .VisualizationMainPage #header  A:visited {
@@ -129,6 +129,7 @@ body {
 
 
 .VisualizationMainPage #footer {
+	width: 100%;
 	padding: 0 10px;
     background: #333;
 	color:#ffcc33;

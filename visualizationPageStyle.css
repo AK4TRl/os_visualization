@@ -30,14 +30,17 @@ body {
 	line-height: 60px;
 	height: 60px;
 }
+#AlgorithmSpecificControls td{
+	width: 18%;
+}
 .VisualizationMainPage #algoControlSection .ctl{
+	width: 100%;
 	border: 0px;
 	border-top: 1px solid #636363;
 	padding: 10px 20px;
 	color: #949494;
 	cursor:pointer;
 	text-align: left;
-	width: 210px;
 	line-height: 24px;
 	font-size: 18px;
 }

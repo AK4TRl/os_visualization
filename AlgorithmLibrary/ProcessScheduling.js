@@ -1016,6 +1016,12 @@ ProcessScheduling.prototype.rr = function (value) {
     this.cmd("Step");
 
     var tmpNextProcessId = null;
+
+    var CountTheProcess = new Array();
+    for(var i = 0; i <= 10; ++i){
+        CountTheProcess[i] = 0;
+    }
+    this.cmd("SetBackgroundColor", tmpFirstProcessID * 16, HIGHLIGHT_BAR_BACKGROUND_COLOR);
     while (tmpProcess.length != 0 || Ready.length != 0)
     {
         if (tmpProcess.length != 0 && BeginTime >= tmpProcess[tmpProcess.length - 1].readyTime)    //有新作业到达，加入就绪队列
@@ -1027,28 +1033,54 @@ ProcessScheduling.prototype.rr = function (value) {
             NextProcessText = reconvert(NextProcessText);
             this.cmd("SetText", this.theStaus, NextProcessText + signId);
             this.cmd("Step");
+            this.cmd("SetBackgroundColor", signId * 16, HIGHLIGHT_BAR_BACKGROUND_COLOR);
+            this.cmd("Step");
 
             tmpProcess.pop();
         }
         else if(Ready.length == 0 && tmpProcess.length != 0 && BeginTime < tmpProcess[tmpProcess.length - 1].readyTime){
             BeginTime = tmpProcess[tmpProcess.length - 1].readyTime;
+            var FindTheFutureTime = "\u7531\u4e8e\u76ee\u524d\u5c31\u7eea\u961f\u5217\u5df2\u7ecf\u6ca1\u6709\u8fdb\u7a0b\uff0c\u56e0\u800c\u53d6\u672a\u6765\u7b2c\u4e00\u4e2a\u5230\u8fbe\u7684\u8fdb\u7a0b\u5c31\u7eea\u65f6\u95f4\u4e3a\u5f53\u524d\u65f6\u95f4\u3002";
+            FindTheFutureTime = reconvert(FindTheFutureTime);
+            this.cmd("SetText", this.theStaus, FindTheFutureTime);
+            this.cmd("Step");
+            var fuckThatShit = "\u65b0\u7684\u8fdb\u7a0b\u0049\u0044\u4e3a";
+            fuckThatShit = reconvert(fuckThatShit);
+            this.cmd("SetText", this.theStaus, fuckThatShit + tmpProcess[tmpProcess.length - 1].pid);
+            this.cmd("Step");
             continue;
         }
         if (Ready[Ready.length - 1].FinishTime + timeslice < Ready[Ready.length - 1].ServerTime)     //时间片用完没运行完,加入队尾
         {
+            CountTheProcess[Ready[Ready.length - 1].pid] ++;
             if(Ready[Ready.length - 1].pid == tmpNextProcessId && tmpNextProcessId != null){
                 var tmpTheSameProcessText = "\u7531\u4e8e\u5728\u8fd0\u884c\u65f6\u5c31\u7eea\u961f\u5217\u5185\u6ca1\u6709\u65b0\u7684\u8fdb\u7a0b\u5165\u5185\uff0c\u6240\u4ee5\u7ee7\u7eed\u5728\u65f6\u95f4\u7247\u5185\u8fd0\u884c\u8fdb\u7a0b";
                 tmpTheSameProcessText = reconvert(tmpTheSameProcessText);
                 this.cmd("SetText", this.theStaus, tmpTheSameProcessText + tmpNextProcessId);
                 this.cmd("Step");
             }
+
             //描述
             var signFinishTime = Ready[Ready.length - 1].FinishTime, signServerTime = Ready[Ready.length - 1].ServerTime;
             var tmpFinishOrNot = "\u7531\u4e8e\u5f53\u524d\u8fdb\u7a0b\u7684\u670d\u52a1\u65f6\u95f4\u5927\u4e8e\u65f6\u95f4\u7247\uff0c\u5373";
             tmpFinishOrNot = reconvert(tmpFinishOrNot);
-            this.cmd("SetText", this.theStaus, tmpFinishOrNot + signFinishTime + "+" + timeslice + "<" + signServerTime);
+            this.cmd("SetText", this.theStaus, tmpFinishOrNot + signServerTime + ">" + timeslice);
             this.cmd("Step");
-            Ready[Ready.length - 1].FinishTime += timeslice;
+            Ready[Ready.length - 1].FinishTime += (timeslice + BeginTime);
+
+            //暂时的结束时刻更改
+            var signTheFirstEndTime = "\u8bb0\u5f55\u7b2c\u4e00\u6b21\u5b8c\u7ed3\u7684\u65f6\u523b\u3002";
+            signTheFirstEndTime = reconvert(signTheFirstEndTime);
+            this.cmd("SetText", this.theStaus, signTheFirstEndTime);
+            this.cmd("Step");
+            this.cmd("SetBackgroundColor", Ready[Ready.length - 1].pid * 16 + 10, HIGHLIGHT_BAR_BACKGROUND_COLOR);
+            this.cmd("Step");
+            this.cmd("SetText", Ready[Ready.length - 1].pid * 16 + 11, Ready[Ready.length - 1].FinishTime);
+            this.cmd("Step");
+            this.cmd("SetBackgroundColor", Ready[Ready.length - 1].pid * 16 + 10, "#fff");
+            this.cmd("SetBackgroundColor", Ready[Ready.length - 1].pid * 16, "#fff");
+            this.cmd("Step");
+
             Ready.unshift(Ready[Ready.length - 1]);
             Ready.pop();
             BeginTime += timeslice;
@@ -1062,22 +1094,59 @@ ProcessScheduling.prototype.rr = function (value) {
         }
         else        //此作业运行完
         {
-            if(Ready[Ready.length - 1].pid == tmpNextProcessId && tmpNextProcessId != null){
-                var tmpTheSameProcessText = "\u7531\u4e8e\u5728\u8fd0\u884c\u65f6\u5c31\u7eea\u961f\u5217\u5185\u6ca1\u6709\u65b0\u7684\u8fdb\u7a0b\u5165\u5185\uff0c\u6240\u4ee5\u7ee7\u7eed\u5728\u65f6\u95f4\u7247\u5185\u8fd0\u884c\u8fdb\u7a0b";
-                tmpTheSameProcessText = reconvert(tmpTheSameProcessText);
-                this.cmd("SetText", this.theStaus, tmpTheSameProcessText + tmpNextProcessId);
+            if(CountTheProcess[Ready[Ready.length - 1].pid] != 1){
+                var FinishResult = "\u7531\u4e8e\u5f53\u524d\u8fdb\u7a0b\u7684\u9700\u670d\u52a1\u65f6\u95f4\u5c0f\u4e8e\u4e00\u4e2a\u65f6\u95f4\u7247\uff0c\u5373";
+                FinishResult = reconvert(FinishResult);
+                var FinishResult2 = "\uff0c\u6b64\u8fdb\u7a0b\u80fd\u5728\u4e00\u4e2a\u65f6\u95f4\u7247\u5185\u5b8c\u6210\u3002";
+                FinishResult2 = reconvert(FinishResult2);
+                this.cmd("SetText", this.theStaus, FinishResult + Ready[Ready.length - 1].ServerTime + "<" + timeslice + FinishResult2);
+                this.cmd("Step");
+                BeginTime += Ready[Ready.length - 1].ServerTime;
+            }
+            else{
+                var FinishResult = "\u5f53\u524d\u8fdb\u7a0b\u865a\u670d\u52a1\u65f6\u95f4\u4e3a";
+                FinishResult = reconvert(FinishResult);
+                var FinishResult2 = "\uff0c\u5728\u7ecf\u5386\u7b2c\u4e00\u4e2a\u65f6\u95f4\u7247\u540e\u7684\u5269\u4f59\u65f6\u95f4";
+                FinishResult2 = reconvert(FinishResult2);
+                var FinishResult3 = "\u8db3\u591f\u5b8c\u6210\u6b64\u8fdb\u7a0b\u3002";
+                FinishResult3 = reconvert(FinishResult3);
+                BeginTime += (Ready[Ready.length - 1].ServerTime - timeslice);
+                var tmpCount = Ready[Ready.length - 1].ServerTime - timeslice;
+                this.cmd("SetText", this.theStaus, FinishResult + Ready[Ready.length - 1].ServerTime + FinishResult2 + tmpCount + FinishResult3);
                 this.cmd("Step");
             }
             var taskp1 = "\u8fdb\u7a0b";
             taskp1 = reconvert(taskp1);
             var taskp2 = "\u8fd0\u884c\u5b8c\u6210\uff0c\u5f00\u59cb\u7edf\u8ba1\u6b64\u8fdb\u7a0b\u7684\u5f00\u59cb\u65f6\u523b\u3001\u7ed3\u675f\u65f6\u523b\u3001\u5468\u8f6c\u65f6\u95f4\u7b49\u3002";
             taskp2 = reconvert(taskp2);
-            this.cmd("SetText", this.theStaus, taskp1 + tmpNextProcessId + taskp2);
+            this.cmd("SetText", this.theStaus, taskp1 + Ready[Ready.length - 1].pid + taskp2);
             this.cmd("Step");
-            BeginTime += (Ready[Ready.length - 1].ServerTime - Ready[Ready.length - 1].FinishTime);
+
+
             Ready[Ready.length - 1].FinishTime = BeginTime;
             Ready[Ready.length - 1].TurnoverTime = Ready[Ready.length - 1].FinishTime - Ready[Ready.length - 1].readyTime;
             Ready[Ready.length - 1].WeightedTurnoverTime = (parseFloat(Ready[Ready.length - 1].TurnoverTime) / parseFloat(Ready[Ready.length - 1].ServerTime)).toFixed(2);
+
+            //结束时间
+            this.cmd("SetBackgroundColor", Ready[Ready.length - 1].pid * 16 + 10, HIGHLIGHT_BAR_BACKGROUND_COLOR);
+            this.cmd("SetText", Ready[Ready.length - 1].pid * 16 + 11, Ready[Ready.length - 1].FinishTime);
+            this.cmd("Step");
+            //周转时间
+            this.cmd("SetBackgroundColor", Ready[Ready.length - 1].pid * 16 + 10, "#fff");
+            this.cmd("SetBackgroundColor", Ready[Ready.length - 1].pid * 16 + 12, HIGHLIGHT_BAR_BACKGROUND_COLOR);
+            this.cmd("SetText", Ready[Ready.length - 1].pid * 16 + 13, Ready[Ready.length - 1].TurnoverTime);
+            this.cmd("Step");
+            //带权周转时间
+            this.cmd("SetBackgroundColor", Ready[Ready.length - 1].pid * 16 + 12, "#fff");
+            this.cmd("SetBackgroundColor", Ready[Ready.length - 1].pid * 16 + 14, HIGHLIGHT_BAR_BACKGROUND_COLOR);
+            this.cmd("SetText", Ready[Ready.length - 1].pid * 16 + 15, Ready[Ready.length - 1].WeightedTurnoverTime);
+            this.cmd("SetBackgroundColor", Ready[Ready.length - 1].pid * 16 + 14, "#fff");
+            this.cmd("Step");
+
+            //完成的染上绿色标记
+            for(var j = 0; j <= 14; j += 2){
+                this.cmd("SetBackgroundColor", Ready[Ready.length - 1].pid * 16 + j, "#008B00");
+            }
 
             //从就绪队列中移除作业
             result.push(Ready[Ready.length - 1]);

@@ -1022,9 +1022,11 @@ ProcessScheduling.prototype.rr = function (value) {
         CountTheProcess[i] = 0;
     }
     this.cmd("SetBackgroundColor", tmpFirstProcessID * 16, HIGHLIGHT_BAR_BACKGROUND_COLOR);
+
+    var firstP = true;
     while (tmpProcess.length != 0 || Ready.length != 0)
     {
-        if (tmpProcess.length != 0 && BeginTime >= tmpProcess[tmpProcess.length - 1].readyTime)    //有新作业到达，加入就绪队列
+        if (tmpProcess.length != 0 && BeginTime >= tmpProcess[tmpProcess.length - 1].readyTime && firstP == false)    //有新作业到达，加入就绪队列
         {
             Ready.push(tmpProcess[tmpProcess.length - 1]);
             //既然来到这里，当然是有一个新的开始啦
@@ -1053,12 +1055,6 @@ ProcessScheduling.prototype.rr = function (value) {
         if (Ready[Ready.length - 1].FinishTime + timeslice < Ready[Ready.length - 1].ServerTime)     //时间片用完没运行完,加入队尾
         {
             CountTheProcess[Ready[Ready.length - 1].pid] ++;
-            if(Ready[Ready.length - 1].pid == tmpNextProcessId && tmpNextProcessId != null){
-                var tmpTheSameProcessText = "\u7531\u4e8e\u5728\u8fd0\u884c\u65f6\u5c31\u7eea\u961f\u5217\u5185\u6ca1\u6709\u65b0\u7684\u8fdb\u7a0b\u5165\u5185\uff0c\u6240\u4ee5\u7ee7\u7eed\u5728\u65f6\u95f4\u7247\u5185\u8fd0\u884c\u8fdb\u7a0b";
-                tmpTheSameProcessText = reconvert(tmpTheSameProcessText);
-                this.cmd("SetText", this.theStaus, tmpTheSameProcessText + tmpNextProcessId);
-                this.cmd("Step");
-            }
 
             //描述
             var signFinishTime = Ready[Ready.length - 1].FinishTime, signServerTime = Ready[Ready.length - 1].ServerTime;
@@ -1103,16 +1099,24 @@ ProcessScheduling.prototype.rr = function (value) {
                 this.cmd("Step");
                 BeginTime += Ready[Ready.length - 1].ServerTime;
             }
-            else{
-                var FinishResult = "\u5f53\u524d\u8fdb\u7a0b\u865a\u670d\u52a1\u65f6\u95f4\u4e3a";
+            else {
+                if(CountTheProcess[Ready[Ready.length - 1].pid] == 1 && Ready[Ready.length - 1].pid == tmpNextProcessId && tmpNextProcessId != null){
+                    var tmpTheSameProcessText = "\u7531\u4e8e\u5728\u8fd0\u884c\u65f6\u5c31\u7eea\u961f\u5217\u5185\u6ca1\u6709\u65b0\u7684\u8fdb\u7a0b\u5165\u5185\uff0c\u6240\u4ee5\u7ee7\u7eed\u5728\u65f6\u95f4\u7247\u5185\u8fd0\u884c\u8fdb\u7a0b\u5728\u5c31\u7eea\u961f\u5217\u4e2d\u7684\u9996\u4f4d\u8fdb\u7a0b";
+                    tmpTheSameProcessText = reconvert(tmpTheSameProcessText);
+                    this.cmd("SetText", this.theStaus, tmpTheSameProcessText + tmpNextProcessId);
+                    this.cmd("Step");
+                }
+                var FinishResult = "\u5f53\u524d\u8fdb\u7a0b";
                 FinishResult = reconvert(FinishResult);
+                var FinishResult1 = "\u9700\u670d\u52a1\u65f6\u95f4\u4e3a";
+                FinishResult1 = reconvert(FinishResult1);
                 var FinishResult2 = "\uff0c\u5728\u7ecf\u5386\u7b2c\u4e00\u4e2a\u65f6\u95f4\u7247\u540e\u7684\u5269\u4f59\u65f6\u95f4";
                 FinishResult2 = reconvert(FinishResult2);
                 var FinishResult3 = "\u8db3\u591f\u5b8c\u6210\u6b64\u8fdb\u7a0b\u3002";
                 FinishResult3 = reconvert(FinishResult3);
                 BeginTime += (Ready[Ready.length - 1].ServerTime - timeslice);
                 var tmpCount = Ready[Ready.length - 1].ServerTime - timeslice;
-                this.cmd("SetText", this.theStaus, FinishResult + Ready[Ready.length - 1].ServerTime + FinishResult2 + tmpCount + FinishResult3);
+                this.cmd("SetText", this.theStaus, FinishResult + Ready[Ready.length - 1].pid + FinishResult1 + Ready[Ready.length - 1].ServerTime + FinishResult2 + tmpCount + FinishResult3);
                 this.cmd("Step");
             }
             var taskp1 = "\u8fdb\u7a0b";
@@ -1152,6 +1156,7 @@ ProcessScheduling.prototype.rr = function (value) {
             result.push(Ready[Ready.length - 1]);
             Ready.pop();
         }
+        firstP = false;
     }
     console.log(tmpProcess);
     console.log(result);

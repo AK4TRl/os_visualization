@@ -14,6 +14,7 @@ function addControlToAlgorithmBar(type, name) {
     //console.log(element);
     var tableEntry = document.createElement("td");
     tableEntry.style.padding = "0px";
+    tableEntry.style.width = "18%";
     tableEntry.appendChild(element);
     document.getElementById("AlgorithmSpecificControls").appendChild(tableEntry);
     return element;

@@ -157,11 +157,15 @@ ProcessScheduling.prototype.createVisualObjects = function(){
 
         yLabelPos += 50;
     }
-    this.theStaus = this.nextIndex;
+    this.theStaus = this.nextIndex++;
     this.cmd("CreateLabel", this.theStaus, " ", 35, 666,0);
     var MainText = "\u8bf7\u4ece\u4e0a\u9762\u8fdb\u884c\u8981\u8fdb\u884c\u7684\u7c7b\u578b\u3002";
     MainText = reconvert(MainText);
     this.cmd("SetText", this.theStaus, MainText);
+
+    this.cmd("CreateLabel", this.nextIndex, " ", 35, 28,0);
+    this.cmd("SetText", this.nextIndex, "注：若要开始下一个算法，请先重置本次算法或直接跳到最后完成该算法。", 35, 28,0);
+    this.cmd("SetTextColor", this.nextIndex, "#EE0000");
 
     this.animationManager.StartNewAnimation(this.commands);
     this.animationManager.skipForward();

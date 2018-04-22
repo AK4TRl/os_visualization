@@ -630,9 +630,7 @@ function AnimationManager(objectManager)
                 this.animatedObjects.setLayer(parseInt(nextCommand[1]), parseInt(nextCommand[2]));
                 //TODO: Add undo information here
             }
-
-
-
+                
             else if (nextCommand[0].toUpperCase() == "CREATELINKEDLIST")
             {
                 if (nextCommand.length == 11)

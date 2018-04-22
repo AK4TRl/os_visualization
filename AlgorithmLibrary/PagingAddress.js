@@ -179,11 +179,11 @@ Page.prototype.createVisualObjects = function(){
 Page.prototype.addControls = function () {
 
     //返回主页
-    this.returnButton = addControlToAlgorithmBar("Button", "Return");
+    this.returnButton = addControlToAlgorithmBar("Button", "返回");
     this.returnButton.onclick = this.returnCallback.bind(this);
 
     //reset
-    this.resetButton = addControlToAlgorithmBar("Button", "Reset");
+    this.resetButton = addControlToAlgorithmBar("Button", "重置");
     this.resetButton.onclick = this.resetCallback.bind(this);
 
     var task1 = "\u9875\u8868\u957f\u5ea6";

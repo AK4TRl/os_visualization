@@ -15,7 +15,6 @@ function getCookie(cookieName)
         }
     }
 }
-
 // Utility funciton to write a cookie
 function setCookie(cookieName,value,expireDays)
 {
@@ -25,8 +24,7 @@ function setCookie(cookieName,value,expireDays)
     document.cookie=cookieName + "=" + value;
 }
 
-
-var ANIMATION_SPEED_DEFAULT = 75;
+var ANIMATION_SPEED_DEFAULT = 25;
 
 
 // TODO:  Move these out of global space into animation manager?
@@ -40,54 +38,6 @@ var skipBackButton;
 var stepBackButton;
 var stepForwardButton;
 var skipForwardButton;
-
-var widthEntry;
-var heightEntry;
-var sizeButton;
-
-
-
-function returnSubmit(field, funct, maxsize, intOnly)
-{
-
-    if (maxsize != undefined)
-    {
-        field.size = maxsize;
-    }
-    return function(event)
-    {
-        var keyASCII = 0;
-        if(window.event) // IE
-        {
-            keyASCII = event.keyCode
-        }
-        else if (event.which) // Netscape/Firefox/Opera
-        {
-            keyASCII = event.which
-        }
-
-        if (keyASCII == 13)
-        {
-            funct();
-            return false;
-        }
-        else if (keyASCII == 59  || keyASCII == 45 || keyASCII == 46 || keyASCII == 190 || keyASCII == 173)
-        {
-            return false;
-        }
-        else if (maxsize != undefined && field.value.length >= maxsize ||
-            intOnly && (keyASCII < 48 || keyASCII > 57))
-
-        {
-            if (!controlKey(keyASCII))
-                return false;
-        }
-        return true;
-
-    }
-
-}
-
 
 function animWaiting()
 {
@@ -122,8 +72,6 @@ function animEnded()
     objectManager.statusReport.setForegroundColor("#000000");
 }
 
-
-
 function anumUndoUnavailable()
 {
     skipBackButton.disabled = true;
@@ -133,7 +81,7 @@ function timeout()
 {
     // We need to set the timeout *first*, otherwise if we
     // try to clear it later, we get behavior we don't want ...
-    timer = setTimeout('timeout()', 30);
+    timer = setTimeout('timeout()', 90);
     animationManager.update();
     objectManager.draw();
 }
@@ -214,14 +162,9 @@ function initCanvas(dataType)
     element.setAttribute("display", "inline-block");
     element.setAttribute("float", "left");
 
-
     var tableEntry = document.createElement("td");
 
-
     var controlBar = document.getElementById("GeneralAnimationControls");
-
-
-
     var newTable = document.createElement("table");
 
     var midLevel = document.createElement("tr");
@@ -240,11 +183,7 @@ function initCanvas(dataType)
     bottomLevel.appendChild(txtNode);
     newTable.appendChild(midLevel);
 
-
-
     tableEntry.appendChild(newTable);
-
-
 
     //Append the element in page (in span).
     controlBar.appendChild(tableEntry);
@@ -278,13 +217,12 @@ function initCanvas(dataType)
 
     element.setAttribute("style", "width:200px");
 
-    animationManager.addListener("AnimationStarted", this, animStarted);
+    animationManager.addListener("AnimationStarted", this, this.animStarted);
     animationManager.addListener("AnimationEnded", this, this.animEnded);
     animationManager.addListener("AnimationWaiting", this, this.animWaiting);
     animationManager.addListener("AnimationUndoUnavailable", this, this.anumUndoUnavailable);
     objectManager.width = canvas.width;
     objectManager.height = canvas.height;
-
 
     return animationManager;
 }

@@ -83,8 +83,8 @@ ProcessScheduling.superclass = Algorithm.prototype;
 ProcessScheduling.prototype.init = function (am, w, h) {
     ProcessScheduling.superclass.init.call(this,am);
     this.theStaus = 0;
-    this.addControls();
     this.nextIndex = 0;
+    this.addControls();
     this.setArraySize();
     this.readyTime = new Array(10);
     this.processNameIndex = new Array(100);
@@ -140,9 +140,11 @@ ProcessScheduling.prototype.createVisualObjects = function(){
             this.nextIndex += 1;
             if (this.showLabels) {
                 //console.log("1");
+                this.cmd("SetBackgroundColor", this.nextIndex, "#fff");
                 this.cmd("CreateLabel", this.nextIndex, "99", xPos, yLabelPos);
             }
             else {
+                this.cmd("SetBackgroundColor", this.nextIndex, "#fff");
                 this.cmd("CreateLabel", this.nextIndex, "0", xPos, yLabelPos);
             }
             this.cmd("SetForegroundColor", this.nextIndex, INDEX_COLOR);
@@ -156,7 +158,7 @@ ProcessScheduling.prototype.createVisualObjects = function(){
         yLabelPos += 50;
     }
     this.theStaus = this.nextIndex;
-    this.cmd("CreateLabel", this.theStaus, " ", 35, 688,0);
+    this.cmd("CreateLabel", this.theStaus, " ", 35, 666,0);
     var MainText = "\u8bf7\u4ece\u4e0a\u9762\u8fdb\u884c\u8981\u8fdb\u884c\u7684\u7c7b\u578b\u3002";
     MainText = reconvert(MainText);
     this.cmd("SetText", this.theStaus, MainText);
@@ -171,45 +173,50 @@ ProcessScheduling.prototype.createVisualObjects = function(){
     }
     this.lastCreatedIndex = this.nextIndex;
 }
+ProcessScheduling.prototype.disableUI = function(event) {
+    //this.resetButton.disabled = true;
+    this.fcfsButton.disabled = true;
+    this.sjfButton.disabled = true;
+    this.psaButton.disabled = true;
+    this.hrrnButton.disabled = true;
+    this.rrButton.disabled = true;
+}
+ProcessScheduling.prototype.enableUI = function(event) {
+    //this.resetButton.disabled = false
+    this.fcfsButton.disabled = false;
+    this.sjfButton.disabled = false;
+    this.psaButton.disabled = false;
+    this.hrrnButton.disabled = false;
+    this.rrButton.disabled = false;
+}
 
 //初始化控件
 ProcessScheduling.prototype.addControls = function () {
 
     //返回主页
-    var task1 = "\u8fd4\u56de";
-    task1 = reconvert(task1);
-    this.returnButton = addControlToAlgorithmBar("Button", task1);
+    this.returnButton = addControlToAlgorithmBar("Button", "返回");
     this.returnButton.onclick = this.returnCallback.bind(this);
 
     //先到先服务算法（FCFS）
-    var task2 = "\u5148\u5230\u5148\u670d\u52a1\u7b97\u6cd5";
-    task2 = reconvert(task2);
-    this.fcfsButton = addControlToAlgorithmBar("Button", task2);
+    this.fcfsButton = addControlToAlgorithmBar("Button", "先到先服务算法");
     this.fcfsButton.onclick = this.fcfsCallback.bind(this);
 
     //短作业优先算法（SJF）
-    var task3 = "\u77ed\u4f5c\u4e1a\u4f18\u5148\u7b97\u6cd5";
-    task3 = reconvert(task3);
-    this.sjfButton = addControlToAlgorithmBar("Button",task3);
+    this.sjfButton = addControlToAlgorithmBar("Button","短作业优先算法");
     this.sjfButton.onclick = this.sjfCallback.bind(this);
 
     //优先级调度算法（PSA）
-    var task4 = "\u4f18\u5148\u7ea7\u8c03\u5ea6\u7b97\u6cd5";
-    task4 = reconvert(task4);
-    this.psaButton = addControlToAlgorithmBar("Button",task4);
+    this.psaButton = addControlToAlgorithmBar("Button","优先级调度算法");
     this.psaButton.onclick = this.psaCallback.bind(this);
 
     //高响应比优先调度算法（HRRN）
-    var task5 = "\u9ad8\u54cd\u5e94\u6bd4\u4f18\u5148\u8c03\u5ea6\u7b97\u6cd5";
-    task5 = reconvert(task5);
-    this.hrrnButton = addControlToAlgorithmBar("Button",task5);
+    this.hrrnButton = addControlToAlgorithmBar("Button","高响应比优先调度算法");
     this.hrrnButton.onclick = this.hrrnCallback.bind(this);
 
     //轮转调度算法（RR）
-    var task6 = "\u65f6\u95f4\u7247\u8f6e\u8f6c\u8c03\u5ea6\u7b97\u6cd5";
-    task6 = reconvert(task6);
-    this.rrButton = addControlToAlgorithmBar("Button",task6);
+    this.rrButton = addControlToAlgorithmBar("Button", "时间片轮转调度算法");
     this.rrButton.onclick = this.rrCallback.bind(this);
+
 }
 
 //回调函数
@@ -217,47 +224,54 @@ ProcessScheduling.prototype.returnCallback = function (option) {
     window.location.href = "index.html";
 }
 
+ProcessScheduling.prototype.resetButtonCallback = function () {
+    this.animationManager.resetAll();
+    this.nextIndex = 0;
+    this.createVisualObjects();
+}
 //**
-//////////////////////////////////////////////////////////////////////FCFS-start//////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////FCFS-start////////////////////////////////////////////////////////////////////
 //FCFS callback 先来先服务
 ProcessScheduling.prototype.fcfsCallback = function (option) {
     Process = [];
+    this.animationManager.skipForward();
     this.randomizeArray(1);
 
-    var task1 = "\u5148\u6765\u5148\u670d\u52a1\u7b97\u6cd5\u5f00\u59cb";
-    task1 = reconvert(task1);
+    this.fcfsButton.disabled = true;
+    this.sjfButton.disabled = true;
+    this.psaButton.disabled = true;
+    this.hrrnButton.disabled = true;
+    this.rrButton.disabled = true;
+
     var f = document.getElementById("GeneralAnimationControls");
     var childs = f.childNodes;
     if(f.getElementsByTagName("td").length < 9) {
-        this.fcfsStartButton = addControlToAnimationBar("Button", task1);
+        this.fcfsStartButton = addControlToAnimationBar("Button", "先来先服务算法 开始");
         this.fcfsStartButton.onclick = this.fcfsStartButtonCallback.bind(this);
+
+        this.resetButton = addControlToAnimationBar("Button", "重置");
+        this.resetButton.onclick = this.resetButtonCallback.bind(this);
     }
     else {
+        f.removeChild(childs[parseInt(f.getElementsByTagName("td").length-3)]);
         f.removeChild(childs[parseInt(f.getElementsByTagName("td").length-2)]);
-        this.fcfsStartButton = addControlToAnimationBar("Button", task1);
+        this.fcfsStartButton = addControlToAnimationBar("Button", "先来先服务算法 开始");
         this.fcfsStartButton.onclick = this.fcfsStartButtonCallback.bind(this);
+
+        this.resetButton = addControlToAnimationBar("Button", "重置");
+        this.resetButton.onclick = this.resetButtonCallback.bind(this);
     }
-    var description = "\u5148\u6765\u5148\u670d\u52a1\u8c03\u5ea6\u7b97\u6cd5\uff08\u0046\u0069\u0072\u0073\u0074\u0020\u0043\u006f\u006d\u0065\u0020\u0046\u0069\u0072\u0073\u0074\u0020\u0053\u0065\u0072\u0076\u0065\uff09\u662f" +
-        "\u4e00\u79cd\u6700\u7b80\u5355\u7684\u65b9\u6cd5\uff0c\u7cfb\u7edf\u7ef4\u62a4" +
-        "\u4e00\u4e2a\u0046\u0049\u0046\u004f\u961f\u5217\uff0c\u6309\u7167\u8fdb\u7a0b" +
-        "\u5230\u8fbe\u5c31\u7eea\u961f\u5217\u7684\u5148\u540e\u6b21\u5e8f\u987a\u5e8f" +
-        "\u8c03\u5ea6\u8fd0\u884c\u3002";
-    description = reconvert(description);
-    var p = "\u2460\u002e\u6309\u5347\u5e8f\u6392\u5217\u5c31\u7eea\u65f6\u95f4\u0020\u2461\u002e\u540e\u6765\u7684\u6309\u5230\u8fbe\u65f6\u95f4\u7684\u5148\u540e\u6392\u5728\u5c31\u7eea\u961f\u5217\u4e0a\uff0c\u6bcf\u6b21\u53d6\u961f\u9996\u5143\u7d20\u8fd0\u884c\u3002";
-    p = reconvert(p);
-    addLabelToAlgorithmBar(description);
-    addLabelToAlgorithmBar(p);
+    addLabelToAlgorithmBar("先来先服务调度算法（First Come First Serve）是一种最简单的方法，系统维护一个FIFO队列，按照进程到达就绪队列的先后次序顺序调度运行。");
+    addLabelToAlgorithmBar("①.按升序排列就绪时间 ②.后来的按到达时间的先后排在就绪队列上，每次取队首元素运行。");
 
     return this.commands;
 }
 ProcessScheduling.prototype.fcfsStartButtonCallback = function (option) {
     this.implementAction(this.fcfs.bind(this), 0);
-}
-//先来先服务算法实现过程
+}//先来先服务算法实现过程
 ProcessScheduling.prototype.fcfs = function(value) {
 
     //this.point=value;    //后移的指针
-    this.animationManager.clearHistory();
     this.commands = new Array();
     var tmpProcess;
 
@@ -282,16 +296,13 @@ ProcessScheduling.prototype.fcfs = function(value) {
     tmpProcess = [0,1,2,3,4,5,6,7,8,9,10,11];
     for(var i = 0; i < this.recordProcess.length; ++i)
     {
-        var p = "\u4ece\u5230\u8fbe\u7684\u8fdb\u7a0b\u627e\u5230\u6700\u5148\u5230\u8fbe\u7684\u4e00\u4e2a\uff0c\u4e0a\u4e00\u4e2a\u8fdb\u7a0b\u7ed3\u675f\u65f6\u523b\u4e3a";
-        p = reconvert(p);
-        var p2 = "\uff0c\u672c\u6b21\u6700\u5148\u5230\u8fbe\u65f6\u95f4\u4e3a";
-        p2 = reconvert(p2);
         var tmpFinishTime;
         if(i == 0)
             tmpFinishTime = 0;
         else
-            tmpFinishTime = this.recordProcess[i - 1].FinishTime
-        this.cmd("SetText", this.theStaus, p + tmpFinishTime + p2 + this.recordProcess[i].readyTime);
+            tmpFinishTime = this.recordProcess[i - 1].FinishTime;
+        this.cmd("SetText", this.theStaus, "从到达的进程找到最先到达的一个，上一个进程结束时刻为"
+            + tmpFinishTime + "，本次最先到达时间为" + this.recordProcess[i].readyTime);
 
         this.cmd("Step");
 
@@ -299,9 +310,7 @@ ProcessScheduling.prototype.fcfs = function(value) {
         this.cmd("Step");
 
         //result flag
-        var cResult = "\u8ba1\u7b97\u5f53\u524d\u8fdb\u7a0b\u7684\u5f00\u59cb\u65f6\u523b\u3001\u7ed3\u675f\u65f6\u523b\u548c\u5468\u8f6c\u65f6\u95f4\u7b49";
-        cResult = reconvert(cResult);
-        this.cmd("SetText", this.theStaus, cResult);
+        this.cmd("SetText", this.theStaus, "计算当前进程的开始时刻、结束时刻和周转时间等");
 
         this.cmd("SetBackgroundColor", this.recordProcess[i].pid * 16 + 2, "#fff");
         this.cmd("SetBackgroundColor", this.recordProcess[i].pid * 16 + 4, HIGHLIGHT_BAR_BACKGROUND_COLOR);
@@ -329,13 +338,9 @@ ProcessScheduling.prototype.fcfs = function(value) {
         this.cmd("SetBackgroundColor", this.recordProcess[i].pid * 16 + 14, "#fff");
 
         this.cmd("Step");
-        var tmpFinishStaus = "\u5b8c\u6210\u3002";
-        tmpFinishStaus = reconvert(tmpFinishStaus);
-        this.cmd("SetText", this.theStaus, tmpFinishStaus);
+        this.cmd("SetText", this.theStaus, "完成。");
         this.cmd("Step");
-        var tmpExchange = "\u5c06\u5b8c\u6210\u540e\u7684\u8fdb\u7a0b\u4ea4\u6362\u5230\u524d\u9762\uff0c\u7136\u540e\u8fdb\u884c\u4e0b\u4e00\u4e2a\u3002";
-        tmpExchange = reconvert(tmpExchange);
-        this.cmd("SetText", this.theStaus, tmpExchange);
+        this.cmd("SetText", this.theStaus, "将完成后的进程交换到前面，然后进行下一个。");
         this.cmd("Step");
         /*---依次移动到顶端----*/
         for(var j = 0; j <= 14; j += 2){
@@ -365,9 +370,7 @@ ProcessScheduling.prototype.fcfs = function(value) {
         tmpProcess[i + 1] = tmpProcess[tmpIndex];
         tmpProcess[tmpIndex] = tmp;
     }
-    var tmpFinishStaus = "\u6240\u6709\u8fdb\u7a0b\u5747\u5df2\u5b8c\u6210\u3002";
-    tmpFinishStaus = reconvert(tmpFinishStaus);
-    this.cmd("SetText", this.theStaus, tmpFinishStaus);
+    this.cmd("SetText", this.theStaus, "所有进程均已完成。");
     console.log(tmpProcess);
     console.log(this.recordProcess);
     this.cmd("Step");
@@ -389,29 +392,37 @@ ProcessScheduling.prototype.fcfs = function(value) {
 //SJF callback
 ProcessScheduling.prototype.sjfCallback = function (option) {
     Process = [];
-    this.animationManager.clearHistory();
+    this.animationManager.skipForward();
     this.randomizeArray(2);
 
-    var task2 = "\u77ed\u4f5c\u4e1a\u4f18\u5148\u7b97\u6cd5\u5f00\u59cb";
-    task2 = reconvert(task2);
+    this.fcfsButton.disabled = true;
+    this.sjfButton.disabled = true;
+    this.psaButton.disabled = true;
+    this.hrrnButton.disabled = true;
+    this.rrButton.disabled = true;
+
     var f = document.getElementById("GeneralAnimationControls");
     var childs = f.childNodes;
+    console.log(f);
     if(f.getElementsByTagName("td").length < 9) {
-        this.sjfStartButton = addControlToAnimationBar("Button", task2);
+        this.sjfStartButton = addControlToAnimationBar("Button", "短作业优先算法 开始");
         this.sjfStartButton.onclick = this.sjfStarttButtonCallback.bind(this);
+
+        this.resetButton = addControlToAnimationBar("Button", "重置");
+        this.resetButton.onclick = this.resetButtonCallback.bind(this);
     }
     else {
+        f.removeChild(childs[parseInt(f.getElementsByTagName("td").length-3)]);
         f.removeChild(childs[parseInt(f.getElementsByTagName("td").length-2)]);
-        this.sjfStartButton = addControlToAnimationBar("Button", task2);
+        this.sjfStartButton = addControlToAnimationBar("Button", "短作业优先算法 开始");
         this.sjfStartButton.onclick = this.sjfStarttButtonCallback.bind(this);
-    }
-    var sjfdescription = "\u6700\u77ed\u4f5c\u4e1a\u4f18\u5148\u8c03\u5ea6\u6cd5\uff08\u0053\u0068\u006f\u0072\u0074\u0020\u004a\u006f\u0062\u0020\u0046\u0069\u0072\u0073\u0074\uff09\u8981\u6c42\u6bcf\u4e2a\u4f5c\u4e1a\u7684\u8fdb\u7a0b\u63d0\u4f9b\u6240\u9700\u7684\u8fd0\u884c\u65f6\u95f4\uff0c\u6bcf\u6b21\u8c03\u5ea6\u4e8b\u603b\u662f\u9009\u53d6\u8fd0\u884c\u65f6\u95f4\u6700\u77ed\u7684\u8fdb\u7a0b\u8fd0\u884c\u3002\u8fd9\u79cd\u7b97\u6cd5\u5bf9\u4e8e\u8fd0\u884c\u65f6\u95f4\u77ed\u7684\u8fdb\u7a0b\u6709\u5229\uff0c\u8fdb\u7a0b\u7684\u5e73\u5747\u7b49\u5f85\u548c\u5468\u8f6c\u65f6\u95f4\u6700\u4f73\u3002";
-    sjfdescription = reconvert(sjfdescription);
 
-    var p = "\u2460\u002e\u6309\u5347\u5e8f\u6392\u5217\u5c31\u7eea\u65f6\u95f4\u0020\u2461\u002e\u540e\u6765\u7684\u6309\u5230\u8fbe\u65f6\u95f4\u7684\u5148\u540e\u653e\u5165\u5728\u5c31\u7eea\u961f\u5217\u4e0a\uff0c\u518d\u5728\u73b0\u5728\u6309\u5230\u8fbe\u65f6\u95f4\u987a\u5e8f\u7684\u57fa\u7840\u4e0a\u518d\u6309\u8fd0\u884c\u65f6\u95f4\u7531\u77ed\u5230\u957f\u8fdb\u884c\u6392\u5e8f\u0020\u2462\u002e\u6bcf\u6b21\u53d6\u961f\u9996\u5143\u7d20\u8fd0\u884c\u3002";
-    p = reconvert(p);
-    addLabelToAlgorithmBar(sjfdescription);
-    addLabelToAlgorithmBar(p);
+        this.resetButton = addControlToAnimationBar("Button", "重置");
+        this.resetButton.onclick = this.resetButtonCallback.bind(this);
+    }
+    addLabelToAlgorithmBar("最短作业优先调度法（Short Job First）要求每个作业的进程提供所需的运行时间，" +
+        "每次调度事总是选取运行时间最短的进程运行。这种算法对于运行时间短的进程有利，进程的平均等待和周转时间最佳。");
+    addLabelToAlgorithmBar("①.按升序排列就绪时间 ②.后来的按到达时间的先后放入在就绪队列上，再在现在按到达时间顺序的基础上再按运行时间由短到长进行排序 ③.每次取队首元素运行。");
 }
 ProcessScheduling.prototype.sjfStarttButtonCallback = function (option) {
     this.implementAction(this.sjf.bind(this), 0);
@@ -457,16 +468,13 @@ ProcessScheduling.prototype.sjf = function(value) {
     tmpProcess = [0,1,2,3,4,5,6,7,8,9,10,11];
     for(var i = 0; i < this.recordProcess.length; ++i)
     {
-        var p = "\u4ece\u5230\u8fbe\u7684\u8fdb\u7a0b\u627e\u5230\u8fd0\u884c\u65f6\u95f4\u6700\u77ed\u7684\u4e00\u4e2a\uff0c\u4e0a\u4e00\u4e2a\u8fdb\u7a0b\u7ed3\u675f\u65f6\u523b\u4e3a";
-        p = reconvert(p);
-        var p2 = "\uff0c\u672c\u6b21\u6700\u5148\u5230\u8fbe\u7684\u4e14\u6700\u77ed\u8fd0\u884c\u65f6\u95f4\u7684\u4e3a";
-        p2 = reconvert(p2);
         var tmpFinishTime;
         if(i == 0)
             tmpFinishTime = 0;
         else
-            tmpFinishTime = this.recordProcess[i - 1].FinishTime
-        this.cmd("SetText", this.theStaus, p + tmpFinishTime + p2 + this.recordProcess[i].ServerTime);
+            tmpFinishTime = this.recordProcess[i - 1].FinishTime;
+        this.cmd("SetText", this.theStaus, "从到达的进程找到最先到达的一个，上一个进程结束时刻为"
+            + tmpFinishTime + "，本次最先到达的且最短运行时间的为" + this.recordProcess[i].ServerTime);
 
         this.cmd("Step");
         this.cmd("SetBackgroundColor", this.recordProcess[i].pid * 16 + 2, HIGHLIGHT_BAR_BACKGROUND_COLOR);
@@ -477,9 +485,7 @@ ProcessScheduling.prototype.sjf = function(value) {
         this.cmd("Step");
 
         //result flag
-        var cResult = "\u8ba1\u7b97\u5f53\u524d\u8fdb\u7a0b\u7684\u5f00\u59cb\u65f6\u523b\u3001\u7ed3\u675f\u65f6\u523b\u548c\u5468\u8f6c\u65f6\u95f4\u7b49";
-        cResult = reconvert(cResult);
-        this.cmd("SetText", this.theStaus, cResult);
+        this.cmd("SetText", this.theStaus, "计算当前进程的开始时刻、结束时刻和周转时间等");
         //开始时间
         this.cmd("SetBackgroundColor", this.recordProcess[i].pid * 16 + 4, "#fff");
         this.cmd("SetBackgroundColor", this.recordProcess[i].pid * 16 + 8, HIGHLIGHT_BAR_BACKGROUND_COLOR);
@@ -503,13 +509,9 @@ ProcessScheduling.prototype.sjf = function(value) {
         this.cmd("SetBackgroundColor", this.recordProcess[i].pid * 16 + 14, "#fff");
 
         this.cmd("Step");
-        var tmpFinishStaus = "\u5b8c\u6210\u3002";
-        tmpFinishStaus = reconvert(tmpFinishStaus);
-        this.cmd("SetText", this.theStaus, tmpFinishStaus);
+        this.cmd("SetText", this.theStaus, "完成。");
         this.cmd("Step");
-        var tmpExchange = "\u5c06\u5b8c\u6210\u540e\u7684\u8fdb\u7a0b\u4ea4\u6362\u5230\u524d\u9762\uff0c\u7136\u540e\u8fdb\u884c\u4e0b\u4e00\u4e2a\u3002";
-        tmpExchange = reconvert(tmpExchange);
-        this.cmd("SetText", this.theStaus, tmpExchange);
+        this.cmd("SetText", this.theStaus, "将完成后的进程交换到前面，然后进行下一个。");
         this.cmd("Step");
 
         /*---依次移动到顶端----*/
@@ -540,9 +542,7 @@ ProcessScheduling.prototype.sjf = function(value) {
         tmpProcess[i + 1] = tmpProcess[tmpIndex];
         tmpProcess[tmpIndex] = tmp;
     }
-    var tmpFinishStaus = "\u6240\u6709\u8fdb\u7a0b\u5747\u5df2\u5b8c\u6210\u3002";
-    tmpFinishStaus = reconvert(tmpFinishStaus);
-    this.cmd("SetText", this.theStaus, tmpFinishStaus);
+    this.cmd("SetText", this.theStaus, "所有进程均已完成。");
     console.log(tmpProcess);
     console.log(this.recordProcess);
     this.cmd("Step");
@@ -563,28 +563,35 @@ ProcessScheduling.prototype.sjf = function(value) {
 //////////////////////////////////////////////////////////////////////PSA-start//////////////////////////////////////////////////////////////////////
 ProcessScheduling.prototype.psaCallback = function (option) {
     Process = [];
-    this.animationManager.clearHistory();
+    this.animationManager.skipForward();
     this.randomizeArray(3);
 
-    var task3 = "\u4f18\u5148\u7ea7\u8c03\u5ea6\u7b97\u6cd5\u5f00\u59cb";
-    task3 = reconvert(task3);
+    this.fcfsButton.disabled = true;
+    this.sjfButton.disabled = true;
+    this.psaButton.disabled = true;
+    this.hrrnButton.disabled = true;
+    this.rrButton.disabled = true;
+
     var f = document.getElementById("GeneralAnimationControls");
     var childs = f.childNodes;
     if(f.getElementsByTagName("td").length < 9) {
-        this.psaStartButton = addControlToAnimationBar("Button", task3);
+        this.psaStartButton = addControlToAnimationBar("Button", "优先级调度算法 开始");
         this.psaStartButton.onclick = this.psaStarttButtonCallback.bind(this);
+
+        this.resetButton = addControlToAnimationBar("Button", "重置");
+        this.resetButton.onclick = this.resetButtonCallback.bind(this);
     }
     else {
+        f.removeChild(childs[parseInt(f.getElementsByTagName("td").length-3)]);
         f.removeChild(childs[parseInt(f.getElementsByTagName("td").length-2)]);
-        this.psaStartButton = addControlToAnimationBar("Button", task3);
+        this.psaStartButton = addControlToAnimationBar("Button", "优先级调度算法 开始");
         this.psaStartButton.onclick = this.psaStarttButtonCallback.bind(this);
+
+        this.resetButton = addControlToAnimationBar("Button", "重置");
+        this.resetButton.onclick = this.resetButtonCallback.bind(this);
     }
-    var psadescription = "\u4f18\u5148\u7ea7\u8c03\u5ea6\u6cd5\uff08\u0050\u0072\u0069\u006f\u0072\u0069\u0074\u0079\u0020\u0053\u0063\u0068\u0065\u0064\u0075\u006c\u0069\u006e\u0067\u0020\u0041\u006c\u0067\u006f\u0072\u0069\u0074\u0068\u006d\uff09\u5728\u8fdb\u7a0b\u8c03\u5ea6\u4e2d\u6bcf\u6b21\u8c03\u5ea6\u65f6\uff0c\u7cfb\u7edf\u628a\u5904\u7406\u673a\u5206\u914d\u7ed9\u5c31\u7eea\u961f\u5217\u4e2d\u4f18\u5148\u6570\u6700\u9ad8\u7684\u8fdb\u7a0b\u3002";
-    psadescription = reconvert(psadescription);
-    var p = "\u2460\u002e\u6309\u5347\u5e8f\u6392\u5217\u5c31\u7eea\u65f6\u95f4\u0020\u2461\u002e\u540e\u6765\u7684\u6309\u5230\u8fbe\u65f6\u95f4\u7684\u5148\u540e\u653e\u5165\u5728\u5c31\u7eea\u961f\u5217\u4e0a\uff0c\u518d\u5728\u73b0\u5728\u6309\u5230\u8fbe\u65f6\u95f4\u987a\u5e8f\u7684\u57fa\u7840\u4e0a\u518d\u6309\u4f18\u5148\u7ea7\u7531\u5927\u5230\u5c0f\u8fdb\u884c\u6392\u5e8f\u0020\u2462\u002e\u6bcf\u6b21\u53d6\u961f\u9996\u5143\u7d20\u8fd0\u884c\u3002";
-    p = reconvert(p);
-    addLabelToAlgorithmBar(psadescription);
-    addLabelToAlgorithmBar(p);
+    addLabelToAlgorithmBar("优先级调度法（Priority Scheduling Algorithm）在进程调度中每次调度时，系统把处理机分配给就绪队列中优先数最高的进程。");
+    addLabelToAlgorithmBar("①.按升序排列就绪时间 ②.后来的按到达时间的先后放入在就绪队列上，再在现在按到达时间顺序的基础上再按优先级由大到小进行排序 ③.每次取队首元素运行。");
 }
 ProcessScheduling.prototype.psaStarttButtonCallback = function (option) {
     this.implementAction(this.psa.bind(this), 0);
@@ -735,8 +742,14 @@ ProcessScheduling.prototype.psa = function (value) {
 //////////////////////////////////////////////////////////////////////HRRN-start//////////////////////////////////////////////////////////////////////
 ProcessScheduling.prototype.hrrnCallback = function (option) {
     Process = [];
-    this.animationManager.clearHistory();
+    this.animationManager.skipForward();
     this.randomizeArray(4);
+
+    this.fcfsButton.disabled = true;
+    this.sjfButton.disabled = true;
+    this.psaButton.disabled = true;
+    this.hrrnButton.disabled = true;
+    this.rrButton.disabled = true;
 
     var task4 = "\u9ad8\u54cd\u5e94\u6bd4\u4f18\u5148\u8c03\u5ea6\u7b97\u6cd5\u5f00\u59cb";
     task4 = reconvert(task4);
@@ -745,11 +758,18 @@ ProcessScheduling.prototype.hrrnCallback = function (option) {
     if(f.getElementsByTagName("td").length < 9) {
         this.hrrnStartButton = addControlToAnimationBar("Button", task4);
         this.hrrnStartButton.onclick = this.hrrnStarttButtonCallback.bind(this);
+
+        this.resetButton = addControlToAnimationBar("Button", "重置");
+        this.resetButton.onclick = this.resetButtonCallback.bind(this);
     }
     else {
+        f.removeChild(childs[parseInt(f.getElementsByTagName("td").length-3)]);
         f.removeChild(childs[parseInt(f.getElementsByTagName("td").length-2)]);
         this.hrrnStartButton = addControlToAnimationBar("Button", task4);
         this.hrrnStartButton.onclick = this.hrrnStarttButtonCallback.bind(this);
+
+        this.resetButton = addControlToAnimationBar("Button", "重置");
+        this.resetButton.onclick = this.resetButtonCallback.bind(this);
     }
     var hrrndescription = "\u9ad8\u54cd\u5e94\u6bd4\u4f18\u5148\u8c03\u5ea6\u7b97\u6cd5\uff08\u0048\u0069\u0067\u0068\u0065\u0073\u0074\u0020\u0052\u0065\u0073\u0070\u006f\u006e\u0073\u0065\u0020\u0052\u0061\u0074\u0069\u006f\u0020\u004e\u0065\u0078\u0074\uff09\u662f\u4e00\u79cd\u5bf9\u0043\u0050\u0055\u4e2d\u592e\u63a7\u5236\u5668\u54cd\u5e94\u6bd4\u7684\u5206\u914d\u7684\u4e00\u79cd\u7b97\u6cd5\u3002\u0048\u0052\u0052\u004e\u662f\u4ecb\u4e8e\u0046\u0043\u0046\u0053\uff08\u5148\u6765\u5148\u670d\u52a1\u7b97\u6cd5\uff09\u4e0e\u0053\u004a\u0046\uff08\u77ed\u4f5c\u4e1a\u4f18\u5148\u7b97\u6cd5\uff09\u4e4b\u95f4\u7684\u6298\u4e2d\u7b97\u6cd5\uff0c\u65e2\u8003\u8651\u4f5c\u4e1a\u7b49\u5f85\u65f6\u95f4\u53c8\u8003\u8651\u4f5c\u4e1a\u8fd0\u884c\u65f6\u95f4\uff0c\u65e2\u7167\u987e\u77ed\u4f5c\u4e1a\u53c8\u4e0d\u4f7f\u957f\u4f5c\u4e1a\u7b49\u5f85\u65f6\u95f4\u8fc7\u957f\uff0c\u6539\u8fdb\u4e86\u8c03\u5ea6\u6027\u80fd\u3002";
     hrrndescription = reconvert(hrrndescription);
@@ -966,8 +986,14 @@ ProcessScheduling.prototype.hrrn = function (value) {
 //////////////////////////////////////////////////////////////////////RR-start//////////////////////////////////////////////////////////////////////
 ProcessScheduling.prototype.rrCallback = function (option) {
     Process = [];
-    this.animationManager.clearHistory();
+    this.animationManager.skipForward();
     this.randomizeArray(5);
+
+    this.fcfsButton.disabled = true;
+    this.sjfButton.disabled = true;
+    this.psaButton.disabled = true;
+    this.hrrnButton.disabled = true;
+    this.rrButton.disabled = true;
 
     var task5 = "\u65f6\u95f4\u7247\u8f6e\u8f6c\u8c03\u5ea6\u7b97\u6cd5\u5f00\u59cb";
     task5 = reconvert(task5);
@@ -976,11 +1002,18 @@ ProcessScheduling.prototype.rrCallback = function (option) {
     if(f.getElementsByTagName("td").length < 9) {
         this.rrStartButton = addControlToAnimationBar("Button", task5);
         this.rrStartButton.onclick = this.rrStarttButtonCallback.bind(this);
+
+        this.resetButton = addControlToAnimationBar("Button", "重置");
+        this.resetButton.onclick = this.resetButtonCallback.bind(this);
     }
     else {
+        f.removeChild(childs[parseInt(f.getElementsByTagName("td").length-3)]);
         f.removeChild(childs[parseInt(f.getElementsByTagName("td").length-2)]);
         this.rrStartButton = addControlToAnimationBar("Button", task5);
         this.rrStartButton.onclick = this.rrStarttButtonCallback.bind(this);
+
+        this.resetButton = addControlToAnimationBar("Button", "重置");
+        this.resetButton.onclick = this.resetButtonCallback.bind(this);
     }
     var rrdescription = "\u65f6\u95f4\u7247\u8f6e\u8f6c\u6cd5\uff08\u0052\u006f\u0075\u006e\u0064\u002d\u0052\u006f\u0062\u0069\u006e\uff09\u7cfb\u7edf\u5148\u628a\u6240\u6709\u5c31\u7eea\u8fdb\u7a0b\u6309\u5148\u5165\u5148\u51fa\u7684\u539f\u5219\u6392\u6210\u4e00\u4e2a\u961f\u5217\uff0c\u65b0\u6765\u7684\u8fdb\u7a0b\u52a0\u5230\u5c31\u7eea\u961f\u5217\u672b\u5c3e\uff0c\u6bcf\u5f53\u6267\u884c\u8fdb\u7a0b\u8c03\u5ea6\u65f6\uff0c\u8fdb\u7a0b\u8c03\u5ea6\u7a0b\u5e8f\u603b\u662f\u9009\u51fa\u5c31\u7eea\u961f\u5217\u7684\u961f\u9996\u8fdb\u7a0b\uff0c\u8ba9\u5b83\u5728\u0043\u0050\u0055\u4e0a\u8fd0\u884c\u4e00\u4e2a\u65f6\u95f4\u7247\u7684\u65f6\u95f4\u3002\u5f53\u8fdb\u7a0b\u7528\u5b8c\u5206\u7ed9\u5b83\u7684\u65f6\u95f4\u7247\u540e\uff0c\u7cfb\u7edf\u7684\u8ba1\u65f6\u5668\u53d1\u51fa\u65f6\u949f\u4e2d\u65ad\uff0c\u8c03\u5ea6\u7a0b\u5e8f\u4fbf\u505c\u6b62\u8be5\u8fdb\u7a0b\u7684\u8fd0\u884c\uff0c\u628a\u5b83\u653e\u5165\u5c31\u7eea\u961f\u5217\u7684\u672b\u5c3e\uff1b\u7136\u540e\uff0c\u628a\u0043\u0050\u0055\u5206\u7ed9\u5c31\u7eea\u961f\u5217\u7684\u961f\u9996\u8fdb\u7a0b\uff0c\u540c\u6837\u4e5f\u8ba9\u5b83\u8fd0\u884c\u4e00\u4e2a\u65f6\u95f4\u7247\uff0c\u5982\u6b64\u5f80\u590d\u3002";
     rrdescription = reconvert(rrdescription);
@@ -1286,6 +1319,8 @@ ProcessScheduling.prototype.randomizeArray = function (type) {
     this.animationManager.skipForward();
     this.animationManager.clearHistory();
 }
+
+
 
 //set the size of the array
 ProcessScheduling.prototype.setArraySize = function () {

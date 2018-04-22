@@ -19,6 +19,7 @@ function addControlToAlgorithmBar(type, name) {
     document.getElementById("AlgorithmSpecificControls").appendChild(tableEntry);
     return element;
 }
+
 function addBankerInput(type, name, num) {
     var tdBar = document.createElement("td");
 
@@ -94,6 +95,8 @@ var Algorithm = function(){}
 //初始化，am运动物体类的基类实例
 Algorithm.prototype.init = function (am, w, h) {
     this.animationManager = am;
+    am.addListener("AnimationStarted", this, this.disableUI);
+    am.addListener("AnimationEnded", this, this.enableUI);
     this.canvasWidth = w;
     this.canvasHeight = h;
     this.actionHistory = [];
@@ -107,6 +110,13 @@ Algorithm.prototype.cmd = function() {
         command = command + "<;>" + String(arguments[i]);
     }
     this.commands.push(command);
+}
+Algorithm.prototype.disableUI = function(event) {
+    // to be overridden in base class
+}
+
+Algorithm.prototype.enableUI = function(event) {
+    // to be overridden in base class
 }
 
 //animation开始

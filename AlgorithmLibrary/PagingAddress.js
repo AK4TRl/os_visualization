@@ -19,7 +19,7 @@ Page.prototype.constructor = Page;
 Page.superclass = Algorithm.prototype;
 
 Page.MESSAGE_X = 35;
-Page.MESSAGE_Y = 728;
+Page.MESSAGE_Y = 688;
 Page.MESSAGE_ID = 0;
 
 function init() {
@@ -161,7 +161,7 @@ Page.prototype.createVisualObjects = function(){
     this.cmd("CreateLabel", this.nextIndex++, Physicaladdress, xPos + 700 + this.array_width / 2, yPos + 400);
     this.cmd("CreateLabel", this.nextIndex++, Transboundaryinterruption, xPos + 400, yPos - 100);
     this.OOBIndex = this.nextIndex - 1;
-    this.cmd("CreateLabel", this.nextIndex++, Unit + ": KB", xPos + 430, yPos + 620);
+    this.cmd("CreateLabel", this.nextIndex++, Unit + ": KB", xPos + 430, yPos + 570);
 
     this.animationManager.StartNewAnimation(this.commands);
     this.animationManager.skipForward();

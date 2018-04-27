@@ -252,7 +252,6 @@ Banker.prototype.addControls = function () {
     this.returnButton = addControlToAlgorithmBar("Button", "返回主页");
     this.returnButton.onclick = this.returnCallback.bind(this);
 
-    //reset
     this.adButton = addControlToAlgorithmBar("Button", "算法介绍");
     this.adButton.onclick = this.adCallback.bind(this);
 
@@ -648,7 +647,6 @@ Banker.prototype.insertCallback = function(event) {
         this.implementAction(this.AvaliableinsertElement.bind(this),insertedValue);
     }
 }
-
 Banker.prototype.AvaliableinsertElement = function(insertedValue){
 
     this.cmd("SetText", 0, " ");

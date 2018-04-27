@@ -11,7 +11,6 @@ var BAR_BACKGROUND_COLOR ="#FFF";
 var INDEX_COLOR = "#000";
 var HIGHLIGHT_BAR_BACKGROUND_COLOR = "#FFAAAA";
 var EDGE_HIGHLIGHT = "#FF0000";
-
 var Page = function (am, w, h) {
     this.init(am, w, h);
 }
@@ -77,7 +76,7 @@ Page.prototype.createVisualObjects = function(){
 
     this.commands = new Array();
 
-    this.cmd("CreateLabel",Page.MESSAGE_ID,"Pls input the data" ,Page.MESSAGE_X,Page.MESSAGE_Y, 0);
+    this.cmd("CreateLabel",Page.MESSAGE_ID,"请按照从左到右的顺序输入相关资源。" ,Page.MESSAGE_X,Page.MESSAGE_Y, 0);
 
     var labelCount = 0;
     this.cmd("CreateGrid", this.nextIndex++, "", this.array_width, this.array_height, xPos + 700, yPos, "center", "center");
@@ -182,6 +181,9 @@ Page.prototype.addControls = function () {
     this.returnButton = addControlToAlgorithmBar("Button", "返回");
     this.returnButton.onclick = this.returnCallback.bind(this);
 
+    this.adButton = addControlToAlgorithmBar("Button", "算法介绍");
+    this.adButton.onclick = this.adCallback.bind(this);
+
     //reset
     this.resetButton = addControlToAlgorithmBar("Button", "重置");
     this.resetButton.onclick = this.resetCallback.bind(this);
@@ -221,9 +223,17 @@ Page.prototype.addControls = function () {
     this.controls.push(this.PagesizeInsertButton);
 
     //start
-    this.PagingAddressTranslationStartButton = addBankerButton("Button", "Paging Address Translation Start");
+    this.PagingAddressTranslationStartButton = addBankerButton("Button", "页式地址转换 开始");
     this.PagingAddressTranslationStartButton.onclick = this.PagingAddressTranslationStartCallback.bind(this);
     this.controls.push(this.PagingAddressTranslationStartButton);
+}
+
+Page.prototype.adCallback = function () {
+    addLabelToAlgorithmBar("页式管理的基本原理将各进程的虚拟空间划分成若干个长度相等的页(page)，" +
+        "页式管理把内存空间按页的大小划分成片或者页面（page frame），然后把页式虚拟地址与内存地址建立一一对应页表，并用相应的硬件地址变换机构，来解决离散地址变换问题。");
+    addLabelToAlgorithmBar("①.先设置页表基址寄存器，获得对应页表的基地址，当前页表基地址默认为0。" +
+        " ②.用基址与虚页号做一次加法找到对应的实页号，如果越界则中断。③.根据加法得出的实际页号找出对应的块号。" +
+        "④.由映射的块号和页内位移组成实际主存地址。");
 }
 
 //回调函数
@@ -232,7 +242,36 @@ Page.prototype.returnCallback = function (option) {
 }
 Page.prototype.resetCallback = function (option) {
     this.animationManager.resetAll();
+    this.insertField.disabled = false;
+    this.insertButton.disabled = false;
 
+    this.LogicaladdressInsertField.disabled = false;
+    this.LogicaladdressInsertButton.disabled = false;
+
+    this.PagesizeInsertField.disabled = false;
+    this.PagesizeInsertButton.disabled = false;
+
+
+    this.nextIndex = 1;
+
+    this.PageAddressIndex = 0;
+    this.PageNoIndex = 0;
+    this.pageListIndex = 0;
+    this.resultIndex = 0;
+    this.pageNumIndex = 0;
+    this.PageLengthIndex = 0;
+    this.LogicaladdressIndex = 0;
+    this.CompareIndex = 0;
+    this.addIndex = 0;
+    this.OOBIndex = 0;
+    this.PT = new Array();
+
+
+    this.PageLength = 0;
+    this.PageNo = 0;
+    this.PageAddress = 0;
+    this.LogicalAddress = 0;
+    this.PageSize = 0;
     this.setArraySize();
     this.commands = [];
     //create random visual objects
@@ -259,6 +298,7 @@ Page.prototype.insertElement = function (insertedValue) {
         alert("too large, it's better to be smaller than 6");
     }
     else {
+        this.cmd("SetText",Page.MESSAGE_ID,"正在生成页表。。");
         this.PageLength = parseInt(insertedValue);
         this.cmd("SetText", this.PageLengthIndex, this.PageLength);
         for(var i = 0; i < parseInt(insertedValue); ++i){
@@ -279,6 +319,7 @@ Page.prototype.insertElement = function (insertedValue) {
 
     this.insertField.disabled = true;
     this.insertButton.disabled = true;
+    this.cmd("SetText",Page.MESSAGE_ID,"请输入逻辑地址。");
 
     console.log(this.commands);
 
@@ -306,6 +347,7 @@ Page.prototype.LogicaladdressInsert = function (insertedValue) {
 
     this.LogicaladdressInsertField.disabled = true;
     this.LogicaladdressInsertButton.disabled = true;
+    this.cmd("SetText",Page.MESSAGE_ID,"请输入页面大小。" );
 
     return this.commands;
 }
@@ -348,10 +390,10 @@ Page.prototype.PagingAddressTranslationStart = function () {
     this.commands = new Array();
 
     if(this.PageNo == null || this.PageNo == undefined || this.PageLength == null || this.PageLength == undefined || this.LogicalAddress == null || this.LogicalAddress == undefined){
-        alert("Pls input the data first.")
+        alert("请先输入全部数据。")
     }
     else {
-        this.cmd("SetText", 0, "Is the PageNo bigger than the PageLength?");
+        this.cmd("SetText", 0, "判断当前页号是否大于页表长度。");
         this.cmd("Step");
         this.cmd("SetEdgeHighLight", this.PageNoIndex, this.CompareIndex, EDGE_HIGHLIGHT);
         this.cmd("SetEdgeHighLight", this.PageLengthIndex, this.CompareIndex, EDGE_HIGHLIGHT);
@@ -361,15 +403,15 @@ Page.prototype.PagingAddressTranslationStart = function () {
         this.cmd("Connect", this.PageNoIndex, this.CompareIndex);
         this.cmd("Connect", this.PageLengthIndex, this.CompareIndex);
         if (this.PageLength < this.PageNo) {
-            this.cmd("SetText", 0, "The PageNo. is bigger than the PageLength, Out of bounds!");
+            this.cmd("SetText", 0, "当前页号大于页表长度，造成越界中断！");
             this.cmd("Step");
             this.cmd("SetEdgeHighLight", this.CompareIndex, this.OOBIndex, EDGE_HIGHLIGHT);
             this.cmd("Step");
-            this.cmd("SetText", 0, "Over");
+            this.cmd("SetText", 0, "结束。");
         }
         else {
             //
-            this.cmd("SetText", 0, "The PageNo. is smaller than the PageLength, pass");
+            this.cmd("SetText", 0, "当前页号比页表长度小，继续");
             this.cmd("SetEdgeHighLight",this.CompareIndex,this.addIndex,EDGE_HIGHLIGHT);
             this.cmd("Step");
             this.cmd("Disconnect",this.CompareIndex,this.addIndex);
@@ -383,21 +425,20 @@ Page.prototype.PagingAddressTranslationStart = function () {
             this.cmd("SetBackgroundColor", this.pageNumIndex - 1, HIGHLIGHT_BAR_BACKGROUND_COLOR);
             this.cmd("SetText",this.pageNumIndex, this.PageNo);
             this.cmd("Step");
-            this.cmd("SetText", 0, "Find the PageNo that suit to this.");
+            this.cmd("SetText", 0, "寻找相同的页号，当前页号为" + this.PageNo);
             this.cmd("Step");
             for(var i = 0; i < this.PageLength; ++i){
 
                 if(this.PageNo != i){
-                    this.cmd("SetText",0, "It's not the same.")
+                    this.cmd("SetText",0, "当前页号为" + this.PageNo + "，找到页号为" + i + "，" + i + "!=" + this.PageNo + "，下一个。")
                     this.cmd("Step");
-                    this.cmd("SetText",0, "Next")
                     this.cmd("Disconnect",this.pageNumIndex,this.pageListIndex);
                     this.cmd("Disconnect",this.pageListIndex + 1,this.resultIndex);
                     this.cmd("Step");
                     this.pageListIndex += 2;
                 }
                 else{
-                    this.cmd("SetText",0, "Find it!")
+                    this.cmd("SetText",0, "找到相同页号。")
                     this.cmd("Step");
                     this.cmd("SetEdgeHighLight",this.pageNumIndex,this.pageListIndex,EDGE_HIGHLIGHT);
                     this.cmd("Step");
@@ -412,11 +453,13 @@ Page.prototype.PagingAddressTranslationStart = function () {
             this.cmd("SetText",this.resultIndex,this.PT[this.PageNo]);
             this.cmd("Step");
             this.cmd("Disconnect",this.pageListIndex + 1,this.resultIndex);
+            this.cmd("Step");
+            this.cmd("SetText",0, "将块号传送到物理地址位置等待计算。")
             this.cmd("Connect",this.pageListIndex + 1,this.resultIndex);
             this.cmd("Disconnect",this.pageNumIndex,this.pageListIndex);
             this.cmd("Connect",this.pageNumIndex,this.pageListIndex);
             this.cmd("SetBackgroundColor", this.pageNumIndex - 1, "#fff");
-            this.cmd("SetText",0, "Cals the last result.");
+            this.cmd("SetText",0, "计算最后结果");
             this.cmd("Step");
             this.cmd("CreateLabel",this.nextIndex++,this.PT[this.PageNo] + " * 1024 * " + (this.PageSize / 1024)+ " + " + this.PageAddress + " = ", this.array_x_pos + 600, this.array_y_pos + 500);
             this.cmd("Step");

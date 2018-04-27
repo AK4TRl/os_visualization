@@ -20,7 +20,7 @@ Segment.prototype.constructor = Segment;
 Segment.superclass = Algorithm.prototype;
 
 Segment.MESSAGE_X = 35;
-Segment.MESSAGE_Y = 728;
+Segment.MESSAGE_Y = 718;
 Segment.MESSAGE_ID = 0;
 
 function init() {
@@ -78,7 +78,7 @@ Segment.prototype.createVisualObjects = function(){
 
     this.commands = new Array();
 
-    this.cmd("CreateLabel",Segment.MESSAGE_ID,"Pls input the data" ,Segment.MESSAGE_X,Segment.MESSAGE_Y, 0);
+    this.cmd("CreateLabel",Segment.MESSAGE_ID,"请按照从左到右的顺序输入相关资源。" ,Segment.MESSAGE_X,Segment.MESSAGE_Y, 0);
 
     var labelCount = 0;
     this.cmd("CreateGrid", this.nextIndex++, "", this.array_width, this.array_height, xPos + 700, yPos, "center", "center");
@@ -163,7 +163,7 @@ Segment.prototype.createVisualObjects = function(){
     this.cmd("CreateLabel", this.nextIndex++, Physicaladdress, xPos + 700 + this.array_width, yPos + 300);
     this.cmd("CreateLabel", this.nextIndex++, Transboundaryinterruption, xPos + 400, yPos - 100);
     this.OOBIndex = this.nextIndex - 1;
-    this.cmd("CreateLabel", this.nextIndex++, format + ": " + SegmentNo + "," + Displacement, xPos + 180, yPos + 620);
+    this.cmd("CreateLabel", this.nextIndex++, format + ": " + SegmentNo + " " + Displacement, xPos + 180, yPos + 598);
 
     this.animationManager.StartNewAnimation(this.commands);
     this.animationManager.skipForward();
@@ -175,16 +175,18 @@ Segment.prototype.createVisualObjects = function(){
     }
     this.lastCreatedIndex = this.nextIndex;
 }
-
 //初始化控件
 Segment.prototype.addControls = function () {
 
     //返回主页
-    this.returnButton = addControlToAlgorithmBar("Button", "Return");
+    this.returnButton = addControlToAlgorithmBar("Button", "返回");
     this.returnButton.onclick = this.returnCallback.bind(this);
 
+    this.adButton = addControlToAlgorithmBar("Button", "算法介绍");
+    this.adButton.onclick = this.adCallback.bind(this);
+
     //reset
-    this.resetButton = addControlToAlgorithmBar("Button", "Reset");
+    this.resetButton = addControlToAlgorithmBar("Button", "重置");
     this.resetButton.onclick = this.resetCallback.bind(this);
 
     var task1 = "\u6bb5\u8868\u957f\u5ea6";
@@ -214,9 +216,16 @@ Segment.prototype.addControls = function () {
     this.controls.push(this.LogicaladdressInsertButton);
 
     //start
-    this.SegmentAddressTranslationStartButton = addBankerButton("Button", "Segment Address Translation Start");
+    this.SegmentAddressTranslationStartButton = addBankerButton("Button", "段式地址转换 开始");
     this.SegmentAddressTranslationStartButton.onclick = this.SegmentAddressTranslationStartCallback.bind(this);
     this.controls.push(this.SegmentAddressTranslationStartButton);
+}
+
+Segment.prototype.adCallback = function () {
+    addLabelToAlgorithmBar("段式管理（segmentation），是指把一个程序分成若干个段（segment）进行存储，每个段都是一个逻辑实体（logical entity），程序员需要知道并使用它。它的产生是与程序的模块化直接有关的。段式管理是通过段表进行的，它包括段号或段名、段起点、装入位、段的长度等。");
+    addLabelToAlgorithmBar("①.先设置段表基址寄存器，获得对应段表的基地址，当前段表基地址默认为0。" +
+        " ②.用基址与虚段号做一次加法找到对应的实段号，如果越界则中断。③.根据加法得出的实际段号找出对应的段基址。" +
+        "④.由映射的段基址和段内位移组成实际主存地址。");
 }
 
 //回调函数
@@ -225,7 +234,31 @@ Segment.prototype.returnCallback = function (option) {
 }
 Segment.prototype.resetCallback = function (option) {
     this.animationManager.resetAll();
+    this.insertField.disabled = false;
+    this.insertButton.disabled = false;
+    this.LogicaladdressInsertField.disabled = false;
+    this.LogicaladdressInsertButton.disabled = false;
+    this.nextIndex = 1;
 
+    this.SegmentAddressIndex = 0;
+    this.SegmentNoIndex = 0;
+    this.SegmentListIndex = 0;
+    this.resultIndex = 0;
+    this.SegmentNumIndex = 0;
+    this.SegmentLengthIndex = 0;
+    this.LogicaladdressIndex = 0;
+    this.CompareIndex = 0;
+    this.addIndex = 0;
+    this.addIndex2 = 0;
+    this.OOBIndex = 0;
+    this.SL = new Array();
+    this.ST = new Array();
+
+
+    this.SegmentLength = 0;
+    this.SegmentNo = 0;
+    this.SegmentAddress = 0;
+    this.Displacement = 0;
     this.setArraySize();
     this.commands = [];
     //create random visual objects
@@ -252,6 +285,7 @@ Segment.prototype.insertElement = function (insertedValue) {
         alert("too large, it's better to be smaller than 6");
     }
     else {
+        this.cmd("SetText",Segment.MESSAGE_ID,"正在生成段表。。");
         this.SegmentLength = parseInt(insertedValue);
         this.cmd("SetText", this.SegmentLengthIndex, this.SegmentLength);
 
@@ -273,6 +307,7 @@ Segment.prototype.insertElement = function (insertedValue) {
 
     this.insertField.disabled = true;
     this.insertButton.disabled = true;
+    this.cmd("SetText",Segment.MESSAGE_ID,"请输入逻辑地址。");
 
     console.log(this.commands);
 
@@ -293,7 +328,7 @@ Segment.prototype.LogicaladdressInsert = function (insertedValue) {
     //
     this.commands = new Array();
 
-    insertedValue = insertedValue.split(",");
+    insertedValue = insertedValue.split(/[ ]+/);
     this.LogicaladdressIndex = this.nextIndex++;
     this.cmd("CreateLabel", this.LogicaladdressIndex,"(" + parseInt(insertedValue[0]) + "," + parseInt(insertedValue[1]) + ")", this.array_x_pos + 868, this.array_y_pos - 100)
     this.cmd("SetText",this.SegmentNoIndex, parseInt(insertedValue[0]));
@@ -318,10 +353,10 @@ Segment.prototype.SegmentAddressTranslationStart = function () {
     this.commands = new Array();
 
     if(this.SegmentNo == null || this.SegmentNo == undefined || this.SegmentLength == null || this.SegmentLength == undefined){
-        alert("Pls input the data first.")
+        alert("请先输入全部数据。")
     }
     else {
-        this.cmd("SetText", 0, "Is the SegmentNo bigger than the SegmentLength?");
+        this.cmd("SetText", 0, "判断当前段号是否大于段表长度。");
         this.cmd("Step");
         this.cmd("SetEdgeHighLight", this.SegmentNoIndex, this.CompareIndex, EDGE_HIGHLIGHT);
         this.cmd("SetEdgeHighLight", this.SegmentLengthIndex, this.CompareIndex, EDGE_HIGHLIGHT);
@@ -331,7 +366,7 @@ Segment.prototype.SegmentAddressTranslationStart = function () {
         this.cmd("Connect", this.SegmentNoIndex, this.CompareIndex);
         this.cmd("Connect", this.SegmentLengthIndex, this.CompareIndex);
         if (this.SegmentLength < this.SegmentNo) {
-            this.cmd("SetText", 0, "The SegmentNo. is bigger than the SegmentLength, Out of bounds!");
+            this.cmd("SetText", 0, "当前段号大于段表长度，造成越界中断！");
             this.cmd("Step");
             this.cmd("SetEdgeHighLight", this.CompareIndex, this.OOBIndex, EDGE_HIGHLIGHT);
             this.cmd("Step");
@@ -339,7 +374,7 @@ Segment.prototype.SegmentAddressTranslationStart = function () {
         }
         else {
             //
-            this.cmd("SetText", 0, "The SegmentNo. is smaller than the SegmentLength, pass");
+            this.cmd("SetText", 0, "当前段号比段表长度小，继续");
             this.cmd("SetEdgeHighLight",this.CompareIndex,this.addIndex,EDGE_HIGHLIGHT);
             this.cmd("Step");
             this.cmd("Disconnect",this.CompareIndex,this.addIndex);
@@ -353,22 +388,21 @@ Segment.prototype.SegmentAddressTranslationStart = function () {
             this.cmd("SetBackgroundColor", this.SegmentNumIndex - 1, HIGHLIGHT_BAR_BACKGROUND_COLOR);
             this.cmd("SetText",this.SegmentNumIndex, this.SegmentNo);
             this.cmd("Step");
-            this.cmd("SetText", 0, "Find the SegmentNo that suit to this.");
+            this.cmd("SetText", 0, "寻找相同的段号，当前段号为" + this.SegmentNo);
             this.cmd("Step");
             for(var i = 0; i < this.SegmentLength; ++i){
                 this.cmd("Connect",this.SegmentNumIndex,this.SegmentListIndex);
                 this.cmd("Connect",this.SegmentListIndex + 1,this.addIndex2);
                 if(this.SegmentNo != i){
-                    this.cmd("SetText",0, "It's not the same.")
+                    this.cmd("SetText",0, "当前段号为" + this.SegmentNo + "，找到段号为" + i + "，" + i + "!=" + this.SegmentNo + "，下一个。")
                     this.cmd("Step");
-                    this.cmd("SetText",0, "Next")
                     this.cmd("Disconnect",this.SegmentNumIndex,this.SegmentListIndex);
                     this.cmd("Disconnect",this.SegmentListIndex + 1,this.addIndex2);
                     this.cmd("Step");
                     this.SegmentListIndex += 3;
                 }
                 else{
-                    this.cmd("SetText",0, "Find it!")
+                    this.cmd("SetText",0, "找到相同段号。")
                     this.cmd("Step");
                     this.cmd("SetEdgeHighLight",this.SegmentNumIndex,this.SegmentListIndex,EDGE_HIGHLIGHT);
                     this.cmd("Step");
@@ -380,13 +414,14 @@ Segment.prototype.SegmentAddressTranslationStart = function () {
             }
             this.cmd("SetEdgeHighLight",this.SegmentListIndex + 1,this.addIndex2,EDGE_HIGHLIGHT);
             this.cmd("Step");
+            this.cmd("SetText",0, "当前段基址为" + this.ST[this.SegmentNo]);
             //this.cmd("SetText",this.addIndex2,this.ST[this.SegmentNo]);
             this.cmd("Disconnect",this.SegmentListIndex + 1,this.addIndex2);
             this.cmd("Connect",this.SegmentListIndex + 1,this.addIndex2);
             this.cmd("Disconnect",this.SegmentNumIndex,this.SegmentListIndex);
             this.cmd("Connect",this.SegmentNumIndex,this.SegmentListIndex);
             this.cmd("SetBackgroundColor", this.SegmentNumIndex - 1, "#fff");
-            this.cmd("SetText",0, "Cals the last result.");
+            this.cmd("SetText",0, "计算最终结果，计算公式为 ： 段基址 * 1024 + 段内偏移量");
             this.cmd("Step");
             this.cmd("SetEdgeHighLight",this.addIndex2,this.resultIndex,EDGE_HIGHLIGHT);
             this.cmd("Step");

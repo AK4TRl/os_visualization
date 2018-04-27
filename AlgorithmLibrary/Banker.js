@@ -339,12 +339,16 @@ Banker.prototype.BankerStart = function(){
 
             this.cmd("SetText",0,"当前请求资源R1大于还需请求资源R1。");
             this.cmd("SetBackgroundColor", this.barLabels[this.barLabels.length - 4 + i] - 1, "#EE0000");
+            this.cmd("Step");
+            this.cmd("SetText",0,"不能通过。");
 
             return this.commands;
         }
         else if(i == 1 && this.request[this.theRequestProcessID][i] > this.Need[this.theRequestProcessID - 1].R2){
             this.cmd("SetText",0,"当前请求资源R2大于还需请求资源R2。");
             this.cmd("SetBackgroundColor", this.barLabels[this.barLabels.length - 4 + i] - 1, "#EE0000");
+            this.cmd("Step");
+            this.cmd("SetText",0,"不能通过。");
 
             return this.commands;
 
@@ -352,6 +356,8 @@ Banker.prototype.BankerStart = function(){
         else if(i == 2 && this.request[this.theRequestProcessID][i] > this.Need[this.theRequestProcessID - 1].R3){
             this.cmd("SetText",0,"当前请求资源R3大于还需请求资源R3。");
             this.cmd("SetBackgroundColor", this.barLabels[this.barLabels.length - 4 + i] - 1, "#EE0000");
+            this.cmd("Step");
+            this.cmd("SetText",0,"不能通过。");
 
             return this.commands;
 
@@ -359,6 +365,8 @@ Banker.prototype.BankerStart = function(){
         else if(i == 3 && this.request[this.theRequestProcessID][i] > this.Need[this.theRequestProcessID - 1].R4){
             this.cmd("SetText",0,"当前请求资源R4大于还需请求资源R4。");
             this.cmd("SetBackgroundColor", this.barLabels[this.barLabels.length - 4 + i] - 1, "#EE0000");
+            this.cmd("Step");
+            this.cmd("SetText",0,"不能通过。");
 
             return this.commands;
 
@@ -395,12 +403,16 @@ Banker.prototype.BankerStart = function(){
         if(i == 0 && this.request[this.theRequestProcessID][i] > this.Available[0].R1){
             this.cmd("SetText",0,"当前请求资源R1大于剩余资源数R1。");
             this.cmd("SetBackgroundColor", this.barLabels[this.barLabels.length - 4 + i] - 1, "#EE0000");
+            this.cmd("Step");
+            this.cmd("SetText",0,"等待");
 
             return this.commands;
         }
         else if(i == 1 && this.request[this.theRequestProcessID][i] > this.Available[0].R2){
             this.cmd("SetText",0,"当前请求资源R2大于剩余资源数R2。");
             this.cmd("SetBackgroundColor", this.barLabels[this.barLabels.length - 4 + i] - 1, "#EE0000");
+            this.cmd("Step");
+            this.cmd("SetText",0,"等待");
 
             return this.commands;
 
@@ -408,6 +420,8 @@ Banker.prototype.BankerStart = function(){
         else if(i == 2 && this.request[this.theRequestProcessID][i] > this.Available[0].R3){
             this.cmd("SetText",0,"当前请求资源R3大于剩余资源数R3。");
             this.cmd("SetBackgroundColor", this.barLabels[this.barLabels.length - 4 + i] - 1, "#EE0000");
+            this.cmd("Step");
+            this.cmd("SetText",0,"等待");
 
             return this.commands;
 
@@ -415,6 +429,8 @@ Banker.prototype.BankerStart = function(){
         else if(i == 3 && this.request[this.theRequestProcessID][i] > this.Available[0].R4){
             this.cmd("SetText",0,"当前请求资源R4大于剩余资源数R4。");
             this.cmd("SetBackgroundColor", this.barLabels[this.barLabels.length - 4 + i] - 1, "#EE0000");
+            this.cmd("Step");
+            this.cmd("SetText",0,"等待");
 
             return this.commands;
 

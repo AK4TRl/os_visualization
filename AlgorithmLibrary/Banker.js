@@ -7,7 +7,7 @@ var canvas;
 
 var ARRAY_SIZE_SMALL = 5;
 var ARRAY_WIDTH_SMALL = 250;
-var ARRAY_BAR_WIDTH_SMALL = 280;
+var ARRAY_BAR_WIDTH_SMALL = 320;
 var ARRAY_HEIGHT_SMALL = 50;
 var ARRAY_INITIAL_X_SMALL = 208;
 
@@ -48,6 +48,7 @@ Banker.prototype.init = function (am, w, h) {
     this.Available = [];
     this.Max = [];
     this.Allocation = [];
+    this.UseForAllocation = [];
     this.Need = [];
     this.safe = [];
     this.FreeAndAllocation = [];
@@ -90,7 +91,7 @@ Banker.prototype.createVisualObjects = function(){
     this.oldData = new Array(this.array_size);
     this.obscureObject  = new Array(this.array_size);
 
-    var xPos = this.array_initial_x;
+    var xPos = this.array_initial_x - 30;
     var yPos = this.array_y_pos;
     var yLabelPos = this.array_label_y_pos;
 
@@ -98,82 +99,81 @@ Banker.prototype.createVisualObjects = function(){
     //console.log(this.array_size);
     var labelCount = 0;
     /*进程/资源*/
-    this.cmd("CreateGrid", this.nextIndex++, "", this.array_bar_width / 2 , 86, xPos + 12, yPos+ 6, "center", "center");
-    this.cmd("CreateLabel", this.nextIndex, "", xPos +12, yPos);
+    this.cmd("CreateGrid", this.nextIndex++, "", this.array_bar_width / 2 , 86, xPos, yPos+ 6, "center", "center");
+    this.cmd("CreateLabel", this.nextIndex, "", xPos, yPos);
     this.barLabels[labelCount++] = this.nextIndex++;
 
 
     /*标签*/
     for(var i = 1; i < 6; ++i) {
         if(i != 5) {
-            this.cmd("CreateGrid", this.nextIndex++, "", this.array_bar_width - 80, 36, xPos * (i + 1) - 20, yPos - 19, "center", "center");
-            this.cmd("CreateLabel", this.nextIndex, "", xPos * (i + 1) - 20, yPos - 20);
+            this.cmd("CreateGrid", this.nextIndex++, "", this.array_bar_width / 2, 36, xPos * (i + 1), yPos - 19, "center", "center");
+            this.cmd("CreateLabel", this.nextIndex, "", xPos * (i + 1), yPos - 20);
             this.barLabels[labelCount++] = this.nextIndex++;
         }
         else{
             /*Finish*/
-            this.cmd("CreateGrid", this.nextIndex++, "", this.array_bar_width - 80, 86, xPos * (i + 1) - 20, yPos+6, "center", "center");
-            this.cmd("CreateLabel", this.nextIndex, "", xPos * (i + 1) - 20, yPos - 20);
+            this.cmd("CreateGrid", this.nextIndex++, "", this.array_bar_width / 2 , 86, xPos * (i + 1), yPos+6, "center", "center");
+            this.cmd("CreateLabel", this.nextIndex, "", xPos * (i + 1), yPos - 20);
             this.barLabels[labelCount++] = this.nextIndex++;
         }
     }
-    xPos += 109;
+    xPos += 118;
 
     /*R1-R16*/
     for(var i = 1; i < 17; ++i){
-        this.cmd("CreateGrid", this.nextIndex++, "", this.array_bar_width / 6 + 3, 50, xPos + 4, yPos+25, "center", "center");
-        this.cmd("CreateLabel", this.nextIndex, "", xPos + 4, yPos+25);
+        this.cmd("CreateGrid", this.nextIndex++, "", this.array_bar_width / 8, 50, xPos, yPos+25, "center", "center");
+        this.cmd("CreateLabel", this.nextIndex, "", xPos, yPos+25);
         this.barLabels[labelCount++] = this.nextIndex++;
         if(i % 4 == 0)
-            xPos += 8;
-        xPos+=50;
+            xPos += 18;
+        xPos+=40;
     }
 
     //Create a cmd to give to the animation manager
     for (var i = 0; i < this.array_size; i++)
     {
-
         //xPos = xPos + this.array_width;
         xPos = this.array_initial_x;
         yPos = yPos + this.array_height;
         //console.log("ps of yLabelPos:" + yLabelPos);
         this.barPositionsY[i] = yPos;
 
-        this.cmd("CreateGrid", this.nextIndex, "", this.array_bar_width / 2, 50,  xPos + 12, yPos + 50, "center", "bottom");
+        this.cmd("CreateGrid", this.nextIndex, "", this.array_bar_width / 2, 50,  xPos - 30, yPos + 25, "center", "center");
         this.cmd("SetForegroundColor", this.nextIndex, BAR_FOREGROUND_COLOR);
         this.cmd("SetBackgroundColor", this.nextIndex, BAR_BACKGROUND_COLOR);
         this.barObjects[i] = this.nextIndex;
         this.nextIndex += 1;
-        this.cmd("CreateLabel", this.nextIndex, "0",  xPos + 12, yLabelPos);
+        this.cmd("CreateLabel", this.nextIndex, "0",  xPos - 30, yPos + 25);
         this.cmd("SetForegroundColor", this.nextIndex, INDEX_COLOR);
         this.barLabels[labelCount++] = this.nextIndex;
         ++this.nextIndex;
 
-        xPos+=109;
+        xPos+=88;
 
         for(var j = 1; j < 17; ++j) {
-            this.cmd("CreateGrid", this.nextIndex, "", this.array_bar_width / 6 + 3, 50, xPos + 4, yLabelPos + 25, "center", "bottom");
+            this.cmd("CreateGrid", this.nextIndex, "", this.array_bar_width / 8, 50, xPos, yLabelPos + 25, "center", "bottom");
             //this.cmd("CreateRectangle", this.nextIndex, "", this.array_bar_width, 200, xPos, yPos,"center","bottom");
             this.cmd("SetForegroundColor", this.nextIndex, BAR_FOREGROUND_COLOR);
             this.cmd("SetBackgroundColor", this.nextIndex, BAR_BACKGROUND_COLOR);
             this.barObjects[i] = this.nextIndex++;
             //this.oldBarObjects[i] = this.barObjects[i];
-            this.cmd("CreateLabel", this.nextIndex, "0", xPos + 4, yLabelPos);
+            this.cmd("CreateLabel", this.nextIndex, "0", xPos, yLabelPos);
             this.cmd("SetForegroundColor", this.nextIndex, INDEX_COLOR);
             //console.log("the barlabels's id :" + this.nextIndex);
             this.barLabels[labelCount++] = this.nextIndex;
             if(j % 4 == 0)
-                xPos += 8;
-            xPos += 50;
+                xPos += 18;
+            xPos += 40;
             ++this.nextIndex;
         }
 
-        this.cmd("CreateGrid", this.nextIndex, "",  this.array_bar_width - 80, 50, 1228,yLabelPos, "center", "center");
+        this.cmd("CreateGrid", this.nextIndex, "",  this.array_bar_width / 2, 50, xPos + 60,yLabelPos, "center", "center");
         this.cmd("SetForegroundColor", this.nextIndex, BAR_FOREGROUND_COLOR);
         this.cmd("SetBackgroundColor", this.nextIndex, BAR_BACKGROUND_COLOR);
         this.barObjects[i] = this.nextIndex;
         this.nextIndex ++;
-        this.cmd("CreateLabel", this.nextIndex, "0", 1228, yLabelPos);
+        this.cmd("CreateLabel", this.nextIndex, "0", xPos + 60, yLabelPos);
         this.cmd("SetForegroundColor", this.nextIndex, INDEX_COLOR);
         this.barLabels[labelCount++] = this.nextIndex;
         ++this.nextIndex;
@@ -181,8 +181,8 @@ Banker.prototype.createVisualObjects = function(){
         yLabelPos += 50;
     }
 
-    this.cmd("CreateGrid", this.nextIndex++, "", this.array_bar_width - 54, 50, 536 ,500, "center", "center");
-    this.cmd("CreateLabel", this.nextIndex, "", 536, 500);
+    this.cmd("CreateGrid", this.nextIndex++, "", this.array_bar_width - 40, 50, 500 ,500, "center", "center");
+    this.cmd("CreateLabel", this.nextIndex, "", 500, 500);
     this.barLabels[labelCount++] = this.nextIndex++;
 
     yPos = 550;
@@ -191,44 +191,48 @@ Banker.prototype.createVisualObjects = function(){
     for(var j = 0; j < 2; ++j) {
         xPos = 450;
         for (var i = 0; i < 4; ++i) {
-            this.cmd("CreateGrid", this.nextIndex++, "", this.array_bar_width / 5, 50, xPos, yPos, "center", "center");
-            this.cmd("CreateLabel", this.nextIndex, "", xPos, yPos);
+            this.cmd("CreateGrid", this.nextIndex++, "", 70, 50, xPos - 55, yPos, "center", "center");
+            this.cmd("CreateLabel", this.nextIndex, "", xPos - 50, yPos);
             this.barLabels[labelCount++] = this.nextIndex++;
-            xPos += 57;
+            xPos += 70;
         }
         yPos += 50;
     }
 
 
     /*请求资源*/
-    this.cmd("CreateGrid", this.nextIndex++, "", this.array_bar_width / 2, 106, 836 ,525, "center", "center");
-    this.cmd("CreateLabel", this.nextIndex, "", 836, 525);
+    this.cmd("CreateGrid", this.nextIndex++, "", this.array_bar_width / 2, 100, 800 ,525, "center", "center");
+    this.cmd("CreateLabel", this.nextIndex, "", 800, 525);
     this.barLabels[labelCount++] = this.nextIndex++;
 
-    this.cmd("CreateGrid", this.nextIndex++, "", this.array_bar_width / 2, 50,  836, 625, "center", "bottom");
-    this.cmd("CreateLabel", this.nextIndex, "", 836, 600);
+    this.cmd("CreateGrid", this.nextIndex++, "", this.array_bar_width / 2, 50,  800, 625, "center", "bottom");
+    this.cmd("CreateLabel", this.nextIndex, "", 800, 600);
     this.barLabels[labelCount++] = this.nextIndex++;
 
-    this.cmd("CreateGrid", this.nextIndex++, "", this.array_bar_width - 54, 50, 1036 ,500, "center", "center");
-    this.cmd("CreateLabel", this.nextIndex, "", 1036, 500);
+    this.cmd("CreateGrid", this.nextIndex++, "", 240, 50, 1000 ,500, "center", "center");
+    this.cmd("CreateLabel", this.nextIndex, "", 1000, 500);
     this.barLabels[labelCount++] = this.nextIndex++;
 
     yPos = 550;
 
     for(var j = 0; j < 2; ++j) {
-        xPos = 950;
+        xPos = 910;
         for (var i = 0; i < 4; ++i) {
-            this.cmd("CreateGrid", this.nextIndex++, "", this.array_bar_width / 5, 50, xPos, yPos, "center", "center");
+            this.cmd("CreateGrid", this.nextIndex++, "", 60, 50, xPos, yPos, "center", "center");
             this.cmd("CreateLabel", this.nextIndex, "", xPos, yPos);
             this.barLabels[labelCount++] = this.nextIndex++;
-            xPos += 57;
+            xPos += 60;
         }
         yPos += 50;
     }
 
 
     this.cmd("CreateLabel", 0, " ", Banker.MESSAGE_X, Banker.MESSAGE_Y,0);
-    this.cmd("SetText", 0, "Pls input the numbers.");
+    this.cmd("SetText", 0, "请按照从左到右的顺序输入相关资源。");
+
+    this.cmd("CreateLabel", this.nextIndex, " ", Banker.MESSAGE_X + 200, Banker.MESSAGE_Y + 60,0);
+    this.cmd("SetText", this.nextIndex, "注：前三个资源输入格式为每个资源数以空格区分，如 x x x x，请求资源格式在前面基础上加上请求目的进程 Px x x x x");
+    this.cmd("SetTextColor", this.nextIndex, "#EE0000");
 
     this.animationManager.StartNewAnimation(this.commands);
     this.animationManager.skipForward();
@@ -245,11 +249,15 @@ Banker.prototype.createVisualObjects = function(){
 Banker.prototype.addControls = function () {
 
     //返回主页
-    this.returnButton = addControlToAlgorithmBar("Button", "Return");
+    this.returnButton = addControlToAlgorithmBar("Button", "返回主页");
     this.returnButton.onclick = this.returnCallback.bind(this);
 
     //reset
-    this.resetButton = addControlToAlgorithmBar("Button", "Reset");
+    this.adButton = addControlToAlgorithmBar("Button", "算法介绍");
+    this.adButton.onclick = this.adCallback.bind(this);
+
+    //reset
+    this.resetButton = addControlToAlgorithmBar("Button", "重置");
     this.resetButton.onclick = this.resetCallback.bind(this);
 
     //可用资源按钮及文本框
@@ -260,17 +268,15 @@ Banker.prototype.addControls = function () {
     this.insertButton.onclick = this.insertCallback.bind(this);
 
     //已有资源按钮及文本框
-    this.ClaiminsertField = addBankerInput("Text", "Claim",1);
-    var taskb = "\u5df2\u6709\u8d44\u6e90\u8f93\u5165";
-    taskb = reconvert(taskb);
-    this.ClaiminsertButton = addBankerButton("Button", taskb);
+    this.ClaiminsertField = addBankerInput("Text", "Max",1);
+
+    this.ClaiminsertButton = addBankerButton("Button", "最大资源输入");
     this.ClaiminsertButton.onclick = this.ClaiminsertCallback.bind(this);
 
     //需要资源按钮及文本框
     this.AllocatedinsertField = addBankerInput("Text", "Allocated",1);
-    var taskc = "\u9700\u8981\u8d44\u6e90\u8f93\u5165";
-    taskc = reconvert(taskc);
-    this.AllocatedinsertButton = addBankerButton("Button", taskc);
+
+    this.AllocatedinsertButton = addBankerButton("Button", "已分配资源输入");
     this.AllocatedinsertButton.onclick = this.AllocatedinsertCallback.bind(this);
 
     //请求资源按钮及文本框
@@ -295,6 +301,13 @@ Banker.prototype.addControls = function () {
         this.BankerStartButton.onclick = this.BankerStartCallback.bind(this);
     }
 }
+Banker.prototype.adCallback = function () {
+    addLabelToAlgorithmBar("银行家算法是一种最有代表性的避免死锁的算法。" +
+        "在避免死锁方法中允许进程动态地申请资源，但系统在进行资源分配之前，应先计算此次分配资源的安全性，若分配不会导致系统进入不安全状态，则分配，否则等待。" +
+        "建议请求资源输入数据为小于或等于可用资源和需求资源。");
+    addLabelToAlgorithmBar("①.如果Requests[i] <= Need[i]，则转到第二步。否则，返回不能通过。这一步是控制进程申请的资源不得大于需要的资源" +
+        " ②.如果Requests[i] <= Available，则转到第三步，否则Pi等待资源。③.满足前两步，调用安全判定算法，检查是否安全。");
+}
 
 Banker.prototype.BankerStartCallback = function (event) {
     this.implementAction(this.BankerStart.bind(this),0);
@@ -303,7 +316,7 @@ Banker.prototype.BankerStart = function(){
 
     this.commands = new Array();
     //
-    this.cmd("SetText",0,"is the request smaller than the need ?");
+    this.cmd("SetText",0,"比较请求进程的资源和目的资源所需要的资源数量，当前请求进程为pid" + this.theRequestProcessID + "。");
     this.cmd("Step");
     this.cmd("SetBackgroundColor", this.ProcessIdIndex[this.theRequestProcessID - 1], HIGHLIGHT_BAR_BACKGROUND_COLOR);
     this.cmd("SetBackgroundColor", this.ProcessIdIndex[this.ProcessIdIndex.length - 1], HIGHLIGHT_BAR_BACKGROUND_COLOR);
@@ -317,34 +330,34 @@ Banker.prototype.BankerStart = function(){
     console.log(this.tmpNeed);
     for(var i = 0; i < 4; ++i) {
         this.cmd("Step");
-        this.cmd("SetText",0,"Compare the Request Process and the Need");
+        this.cmd("SetText",0,"对比当前请求进程pid" + this.theRequestProcessID + "的请求资源数和还需要资源数的大小。");
         this.cmd("SetBackgroundColor", this.theNeedIndex[this.theRequestProcessID - 1][i] - 1, HIGHLIGHT_BAR_BACKGROUND_COLOR);
         this.cmd("SetBackgroundColor", this.barLabels[this.barLabels.length - 4 + i] - 1, HIGHLIGHT_BAR_BACKGROUND_COLOR);
         this.cmd("Step");
 
         if(i == 0 && this.request[this.theRequestProcessID][i] > this.Need[this.theRequestProcessID - 1].R1){
 
-            this.cmd("SetText",0,"the request is bigger than the need.");
+            this.cmd("SetText",0,"当前请求资源R1大于还需请求资源R1。");
             this.cmd("SetBackgroundColor", this.barLabels[this.barLabels.length - 4 + i] - 1, "#EE0000");
 
             return this.commands;
         }
         else if(i == 1 && this.request[this.theRequestProcessID][i] > this.Need[this.theRequestProcessID - 1].R2){
-            this.cmd("SetText",0,"the request is bigger than the need.");
+            this.cmd("SetText",0,"当前请求资源R2大于还需请求资源R2。");
             this.cmd("SetBackgroundColor", this.barLabels[this.barLabels.length - 4 + i] - 1, "#EE0000");
 
             return this.commands;
 
         }
         else if(i == 2 && this.request[this.theRequestProcessID][i] > this.Need[this.theRequestProcessID - 1].R3){
-            this.cmd("SetText",0,"the request is bigger than the need.");
+            this.cmd("SetText",0,"当前请求资源R3大于还需请求资源R3。");
             this.cmd("SetBackgroundColor", this.barLabels[this.barLabels.length - 4 + i] - 1, "#EE0000");
 
             return this.commands;
 
         }
         else if(i == 3 && this.request[this.theRequestProcessID][i] > this.Need[this.theRequestProcessID - 1].R4){
-            this.cmd("SetText",0,"the request is bigger than the need.");
+            this.cmd("SetText",0,"当前请求资源R4大于还需请求资源R4。");
             this.cmd("SetBackgroundColor", this.barLabels[this.barLabels.length - 4 + i] - 1, "#EE0000");
 
             return this.commands;
@@ -353,15 +366,15 @@ Banker.prototype.BankerStart = function(){
         else{
             this.cmd("Step");
             this.cmd("SetBackgroundColor", this.barLabels[this.barLabels.length - 4 + i] - 1, "#008B00");
-            this.cmd("SetText",0,"the R" + (i + 1) + " of the Request is smaller than the R" + (i + 1) + " of the Need ");
+            this.cmd("SetText",0,"当前请求资源R"+ (i + 1) + "小于或等于还需请求资源数R" + (i + 1) + "。");
             this.cmd("Step");
-            this.cmd("SetText",0,"the next one ");
+            this.cmd("SetText",0,"下一个");
             this.cmd("Step");
         }
     }
 
     this.cmd("Step");
-    this.cmd("SetText",0,"pass");
+    this.cmd("SetText",0,"通过");
 
     for(var i = 0; i < 4; ++i){
         this.cmd("SetBackgroundColor", this.barLabels[this.barLabels.length - 4 + i] - 1, "#fff");
@@ -374,33 +387,33 @@ Banker.prototype.BankerStart = function(){
     /*check the Available and the request*/
     for(var i = 0; i < 4; ++i) {
         this.cmd("Step");
-        this.cmd("SetText",0,"Compare the Request Process and the Available");
+        this.cmd("SetText",0,"对比当前请求进程pid" + this.theRequestProcessID + "的请求资源数和剩余资源数的大小。");
         this.cmd("SetBackgroundColor", this.theAvailableIndex[i] - 1, HIGHLIGHT_BAR_BACKGROUND_COLOR);
         this.cmd("SetBackgroundColor", this.barLabels[this.barLabels.length - 4 + i] - 1, HIGHLIGHT_BAR_BACKGROUND_COLOR);
         this.cmd("Step");
 
         if(i == 0 && this.request[this.theRequestProcessID][i] > this.Available[0].R1){
-            this.cmd("SetText",0,"the request is bigger than the Available.");
+            this.cmd("SetText",0,"当前请求资源R1大于剩余资源数R1。");
             this.cmd("SetBackgroundColor", this.barLabels[this.barLabels.length - 4 + i] - 1, "#EE0000");
 
             return this.commands;
         }
         else if(i == 1 && this.request[this.theRequestProcessID][i] > this.Available[0].R2){
-            this.cmd("SetText",0,"the request is bigger than the Available.");
+            this.cmd("SetText",0,"当前请求资源R2大于剩余资源数R2。");
             this.cmd("SetBackgroundColor", this.barLabels[this.barLabels.length - 4 + i] - 1, "#EE0000");
 
             return this.commands;
 
         }
         else if(i == 2 && this.request[this.theRequestProcessID][i] > this.Available[0].R3){
-            this.cmd("SetText",0,"the request is bigger than the Available.");
+            this.cmd("SetText",0,"当前请求资源R3大于剩余资源数R3。");
             this.cmd("SetBackgroundColor", this.barLabels[this.barLabels.length - 4 + i] - 1, "#EE0000");
 
             return this.commands;
 
         }
         else if(i == 3 && this.request[this.theRequestProcessID][i] > this.Available[0].R4){
-            this.cmd("SetText",0,"the request is bigger than the Available.");
+            this.cmd("SetText",0,"当前请求资源R4大于剩余资源数R4。");
             this.cmd("SetBackgroundColor", this.barLabels[this.barLabels.length - 4 + i] - 1, "#EE0000");
 
             return this.commands;
@@ -409,9 +422,9 @@ Banker.prototype.BankerStart = function(){
         else{
             this.cmd("Step");
             this.cmd("SetBackgroundColor", this.barLabels[this.barLabels.length - 4 + i] - 1, "#008B00");
-            this.cmd("SetText",0,"the R" + (i + 1) + " of the Request is smaller than the R" + (i + 1) + " of the Available ");
+            this.cmd("SetText",0,"当前请求资源R"+ (i + 1) + "小于或等于剩余资源数R" + (i + 1) + "。");
             this.cmd("Step");
-            this.cmd("SetText",0,"the next one ");
+            this.cmd("SetText",0,"下一个");
             this.cmd("Step");
         }
     }
@@ -420,7 +433,9 @@ Banker.prototype.BankerStart = function(){
         this.cmd("SetBackgroundColor", this.theAvailableIndex[i] - 1, "#fff");
     }
     this.cmd("Step");
+    this.cmd("SetText",0,"通过");
 
+    this.cmd("Step");
     //满足小于需要和可用，进行分配
     this.tmpAvailable[0].R1 = parseInt(this.tmpAvailable[0].R1) - parseInt(this.request[this.theRequestProcessID][0]);
     this.tmpAvailable[0].R2 = parseInt(this.tmpAvailable[0].R2) - parseInt(this.request[this.theRequestProcessID][1]);
@@ -437,16 +452,18 @@ Banker.prototype.BankerStart = function(){
     this.tmpNeed[this.theRequestProcessID - 1].R3 = parseInt(this.tmpNeed[this.theRequestProcessID - 1].R3) - parseInt(this.request[this.theRequestProcessID][2]);
     this.tmpNeed[this.theRequestProcessID - 1].R4 = parseInt(this.tmpNeed[this.theRequestProcessID - 1].R4) - parseInt(this.request[this.theRequestProcessID][3]);
 
+    this.cmd("SetText",0,"进行安全检测。。。");
+    this.cmd("Step");
     /*安全检测*/
-    var check = this.SaveOrNot();
+    var check = this.SaveOrNot(this.commands);
 
     console.log(this.theFreeAndAllocationIndex);
-    this.cmd("SetText",0,"SAFE!Being allocated...");
-    this.cmd("Step");
 
     if(check) {
+        this.cmd("SetText",0,"检测安全！正在进行分配。。。");
+        this.cmd("Step");
         for(var j = 0; j < 5; ++j) {
-
+            this.cmd("SetText",0,"进行分配。。。");
             for(var k = 0; k < 4; ++k){
                 if(k == 0) {
                     this.cmd("SetBackgroundColor", this.theNeedIndex[this.safe[j]][k] - 9, HIGHLIGHT_BAR_BACKGROUND_COLOR);
@@ -490,14 +507,49 @@ Banker.prototype.BankerStart = function(){
 
             for (var i = 0; i < 4; ++i) {
                 this.cmd("SetBackgroundColor", this.theFreeAndAllocationIndex[this.safe[j]][i] - 1, HIGHLIGHT_BAR_BACKGROUND_COLOR);
-                if (i == 0)
+                if (i == 0) {
+                    this.cmd("SetText",0,"分配释放后的资源R13为已分配资源" + this.UseForAllocation[this.safe[j]].R1 + "+系统可用资源" + (this.FreeAndAllocation[this.safe[j]].R1 - this.UseForAllocation[0].R1) + "=" + this.FreeAndAllocation[this.safe[j]].R1);
+                    this.cmd("Step");
                     this.cmd("SetText", this.theFreeAndAllocationIndex[this.safe[j]][i], this.FreeAndAllocation[this.safe[j]].R1);
-                else if (i == 1)
+                    this.cmd("Step");
+                    this.cmd("SetBackgroundColor", this.theAvailableIndex[i] - 1, HIGHLIGHT_BAR_BACKGROUND_COLOR);
+                    this.cmd("Step");
+                    this.cmd("SetText", this.theAvailableIndex[i], this.FreeAndAllocation[this.safe[j]].R1);
+                    this.cmd("Step");
+                    this.cmd("SetBackgroundColor", this.theAvailableIndex[i] - 1, "#fff");
+                }
+                else if (i == 1) {
+                    this.cmd("SetText",0,"分配释放后的资源R14为已分配资源" + this.UseForAllocation[this.safe[j]].R2 + "+系统可用资源" + (this.FreeAndAllocation[this.safe[j]].R2 - this.UseForAllocation[0].R2) + "=" + this.FreeAndAllocation[this.safe[j]].R2);
+                    this.cmd("Step");
                     this.cmd("SetText", this.theFreeAndAllocationIndex[this.safe[j]][i], this.FreeAndAllocation[this.safe[j]].R2);
-                else if (i == 2)
+                    this.cmd("Step");
+                    this.cmd("SetBackgroundColor", this.theAvailableIndex[i] - 1, HIGHLIGHT_BAR_BACKGROUND_COLOR);
+                    this.cmd("Step");
+                    this.cmd("SetText", this.theAvailableIndex[i], this.FreeAndAllocation[this.safe[j]].R2);
+                    this.cmd("Step");
+                    this.cmd("SetBackgroundColor", this.theAvailableIndex[i] - 1, "#fff");
+                }
+                else if (i == 2) {
+                    this.cmd("SetText",0,"分配释放后的资源R15为已分配资源" + this.UseForAllocation[this.safe[j]].R3 + "+系统可用资源" + (this.FreeAndAllocation[this.safe[j]].R3 - this.UseForAllocation[this.safe[j]].R3) + "=" + this.FreeAndAllocation[this.safe[j]].R3);
+                    this.cmd("Step");
                     this.cmd("SetText", this.theFreeAndAllocationIndex[this.safe[j]][i], this.FreeAndAllocation[this.safe[j]].R3);
+                    this.cmd("Step");
+                    this.cmd("SetBackgroundColor", this.theAvailableIndex[i] - 1, HIGHLIGHT_BAR_BACKGROUND_COLOR);
+                    this.cmd("Step");
+                    this.cmd("SetText", this.theAvailableIndex[i], this.FreeAndAllocation[this.safe[j]].R3);
+                    this.cmd("Step");
+                    this.cmd("SetBackgroundColor", this.theAvailableIndex[i] - 1, "#fff");
+                }
                 else if (i == 3) {
+                    this.cmd("SetText",0,"分配释放后的资源R16为已分配资源" + this.UseForAllocation[this.safe[j]].R4 + "+系统可用资源" + (this.FreeAndAllocation[this.safe[j]].R4 - this.UseForAllocation[this.safe[j]].R4) + "=" + this.FreeAndAllocation[this.safe[j]].R4);
+                    this.cmd("Step");
                     this.cmd("SetText", this.theFreeAndAllocationIndex[this.safe[j]][i], this.FreeAndAllocation[this.safe[j]].R4);
+                    this.cmd("Step");
+                    this.cmd("SetBackgroundColor", this.theAvailableIndex[i] - 1, HIGHLIGHT_BAR_BACKGROUND_COLOR);
+                    this.cmd("Step");
+                    this.cmd("SetText", this.theAvailableIndex[i], this.FreeAndAllocation[this.safe[j]].R4);
+                    this.cmd("Step");
+                    this.cmd("SetBackgroundColor", this.theAvailableIndex[i] - 1, "#fff");
                 }
                 this.cmd("Step");
             }
@@ -511,12 +563,12 @@ Banker.prototype.BankerStart = function(){
         this.cmd("Step");
         console.log(this.FreeAndAllocation);
         console.log(this.theStausIndex);
-        this.cmd("SetText", 0, "success.");
+        this.cmd("SetText", 0, "成功.");
         this.cmd("Step");
-        this.cmd("SetText", 0, "Existence of security sequences {P"+(this.safe[0] + 1)+", P"+(this.safe[1]+1)+", P"+(this.safe[2]+1)+", P"+(this.safe[3]+1)+", P"+(this.safe[4]+1)+"}");
+        this.cmd("SetText", 0, "存在一个安全队列为 {P"+(this.safe[0] + 1)+", P"+(this.safe[1]+1)+", P"+(this.safe[2]+1)+", P"+(this.safe[3]+1)+", P"+(this.safe[4]+1)+"}");
     }
     else{
-        this.cmd("SetText",0,"fail.");
+        this.cmd("SetText",0,"失败.");
     }
 
     /*检测结束*/
@@ -570,8 +622,7 @@ Banker.prototype.SaveOrNot = function (){
 //*
 /////////////////////////////////Available/////////////////////////////////
 //
-Banker.prototype.insertCallback = function(event)
-{
+Banker.prototype.insertCallback = function(event) {
     var insertedValue;
 
     insertedValue = this.normalizeNumber(this.insertField.value, this.insertField.length);
@@ -589,7 +640,7 @@ Banker.prototype.AvaliableinsertElement = function(insertedValue){
     if(insertedValue.length != 7)
         alert("Invalid input, pls input four numbers")
     else {
-        var t = insertedValue.split(",");
+        var t = insertedValue.split(/[ ]+/);
         var index = 117;
         for (var i = 0; i < 4; ++i) {
             this.cmd("SetText", this.barLabels[index + i], t[i]);
@@ -633,8 +684,8 @@ Banker.prototype.ClaiminsertElement = function(insertedValue){
         if(this.claimNum >= 5)
             alert("FULL ");
         else {
-            this.cmd("SetText", 0, "you havae " + (4 - this.claimNum) + " times to input");
-            var t = insertedValue.split(",");
+            this.cmd("SetText", 0, "你还需要输入" + (4 - this.claimNum) + "个进程的最大资源。");
+            var t = insertedValue.split(/[ ]+/);
             for (var i = 0; i < 4; ++i) {
                 this.cmd("SetText", this.barLabels[this.SetClaimTextIndex], t[i]);
                 this.SetClaimTextIndex++;
@@ -682,7 +733,8 @@ Banker.prototype.AllocatedinsertElement = function(insertedValue){
         if(this.AllocatedNum >= 5)
             alert("FULL ");
         else {
-            var t = insertedValue.split(",");
+            this.cmd("SetText", 0, "你还需要输入" + (4 - this.AllocatedNum) + "个进程的已分配资源。");
+            var t = insertedValue.split(/[ ]+/);
             for(var i = 0; i < t.length; ++i) {
                 if (t[0] > this.Max[this.AllocatedNum].R1 || t[1] > this.Max[this.AllocatedNum].R2 || t[2] > this.Max[this.AllocatedNum].R3 || t[3] > this.Max[this.AllocatedNum].R4) {
                     alert("Wrong input！Pls input the right number");
@@ -726,6 +778,14 @@ Banker.prototype.AllocatedinsertElement = function(insertedValue){
                 'R3': parseInt(t[2]),
                 'R4': parseInt(t[3])
             });
+
+            this.UseForAllocation.push({
+                'R1': parseInt(t[0]),
+                'R2': parseInt(t[1]),
+                'R3': parseInt(t[2]),
+                'R4': parseInt(t[3])
+            });
+
             this.AllocatedNum++;
 
             if(this.AllocatedNum == 5){
@@ -758,13 +818,15 @@ Banker.prototype.Requestinsert = function(insertedValue){
     if(insertedValue.length != 10)
         alert("Invalid input, pls input four numbers")
     else{
-        var t = insertedValue.split(",");
+        var t = insertedValue.split(/[ ]+/);
         this.cmd("SetText", this.barLabels[122],"P" + t[0][1]);
         this.theRequestProcessID = t[0][1];
         for(var i = 0; i < 4; ++i){
             this.cmd("SetText", this.barLabels[128 + i],t[i + 1]);
             this.request[t[0][1]][i] = parseInt(t[i + 1]);
         }
+        this.RequestinsertField.disabled = true;
+        this.RequestinsertButton.disabled = true;
     }
 
     return this.commands;
@@ -779,6 +841,7 @@ Banker.prototype.resetCallback = function (option) {
     this.Available = [];
     this.Max = [];
     this.Allocation = [];
+    this.UseForAllocation = [];
     this.Need = [];
     this.safe = [];
     this.FreeAndAllocation = [];

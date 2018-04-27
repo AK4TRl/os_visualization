@@ -34,22 +34,12 @@ function initPage() {
 HomePage.prototype.addControls = function () {
 
     //调度算法
-    var task1 = "\u8fdb\u7a0b\u8c03\u5ea6\u7b97\u6cd5";
-    task1 = reconvert(task1);
-    this.task1Button = addControlToAlgorithmBar("Button", task1);
+    this.task1Button = addControlToAlgorithmBar("Button", "进程调度算法");
     this.task1Button.onclick = this.task1Callback.bind(this);
 
     //银行家算法
-    var task2 = "\u94f6\u884c\u5bb6\u7b97\u6cd5";
-    task2 = reconvert(task2);
-    this.task2Button = addControlToAlgorithmBar("Button", task2);
+    this.task2Button = addControlToAlgorithmBar("Button", "银行家算法");
     this.task2Button.onclick = this.task2Callback.bind(this);
-
-    //内存分配算法
-    var task3 = "\u5185\u5b58\u5206\u914d\u7b97\u6cd5";
-    task3 = reconvert(task3);
-    this.task3Button = addControlToAlgorithmBar("Button",task3);
-    this.task3Button.onclick = this.task3Callback.bind(this);
 
     //页式地址转换
     var task4 = "\u9875\u5f0f\u5730\u5740\u8f6c\u6362";
@@ -68,6 +58,12 @@ HomePage.prototype.addControls = function () {
     task6 = reconvert(task6);
     this.task6Button = addControlToAlgorithmBar("Button",task6);
     this.task6Button.onclick = this.task6Callback.bind(this);
+
+    //内存分配算法
+    var task3 = "\u5185\u5b58\u5206\u914d\u7b97\u6cd5";
+    task3 = reconvert(task3);
+    this.task3Button = addControlToAlgorithmBar("Button",task3);
+    this.task3Button.onclick = this.task3Callback.bind(this);
 }
 
 HomePage.prototype.task1Callback = function (option) {
@@ -76,9 +72,6 @@ HomePage.prototype.task1Callback = function (option) {
 HomePage.prototype.task2Callback = function (option) {
     window.location.href = "BankerAlgorithm.html";
 }
-HomePage.prototype.task3Callback = function (option) {
-
-}
 HomePage.prototype.task4Callback = function (option) {
     window.location.href = "PagingAddressTranslation.html";
 }
@@ -86,9 +79,11 @@ HomePage.prototype.task5Callback = function (option) {
     window.location.href = "SegmentAddressTranslation.html";
 }
 HomePage.prototype.task6Callback = function (option) {
-
+    alert("正在施工");
 }
-
+HomePage.prototype.task3Callback = function (option) {
+    alert("正在施工");
+}
 //Unicode转码
 function reconvert(str){
     str = str.replace(/(\\u)(\w{1,4})/gi,function($0){

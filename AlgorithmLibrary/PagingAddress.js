@@ -305,8 +305,8 @@ Page.prototype.insertElement = function (insertedValue) {
             this.PT[i] = Math.floor(1 + Math.random()*512);
         }
         this.cmd("SetText",this.pageListIndex,"");
-        this.cmd("CreateLabel", this.nextIndex++, "page", 500, 360, 1);
-        this.cmd("CreateLabel", this.nextIndex++, "block", 570, 360, 1);
+        this.cmd("CreateLabel", this.nextIndex++, "页号", 500, 360, 1);
+        this.cmd("CreateLabel", this.nextIndex++, "块号", 570, 360, 1);
         this.pageListIndex = this.nextIndex;
         for(var i = 0; i < parseInt(insertedValue); ++i) {
             this.cmd("CreateGrid", this.nextIndex++, i, 70, 40, 500, 400 + (i * 40));

@@ -294,9 +294,9 @@ Segment.prototype.insertElement = function (insertedValue) {
         this.SL = createRandomArr(parseInt(insertedValue), 200,800);
 
         this.cmd("SetText",this.SegmentListIndex,"");
-        this.cmd("CreateLabel", this.nextIndex++, "segment", 500, 260, 1);
-        this.cmd("CreateLabel", this.nextIndex++, "base", 570, 260, 1);
-        this.cmd("CreateLabel", this.nextIndex++, "segmentLenght", 680, 260, 1);
+        this.cmd("CreateLabel", this.nextIndex++, "段号", 500, 260, 1);
+        this.cmd("CreateLabel", this.nextIndex++, "段基址", 570, 260, 1);
+        this.cmd("CreateLabel", this.nextIndex++, "段长", 680, 260, 1);
         this.SegmentListIndex = this.nextIndex;
         for(var i = 0; i < parseInt(insertedValue); ++i) {
             this.cmd("CreateGrid", this.nextIndex++, i, 60, 40, 500, 300 + (i * 40));

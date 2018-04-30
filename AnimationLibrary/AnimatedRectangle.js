@@ -264,8 +264,7 @@ AnimatedRectangle.prototype.setText = function(newText, textIndex)
 	// TODO:  setting text position?
 }
 
-
-AnimatedRectangle.prototype.createUndoDelete = function() 
+AnimatedRectangle.prototype.createUndoDelete = function()
 {
 	// TODO: Add color?
 	return new UndoDeleteRectangle(this.objectID, this.label, this.x, this.y, this.w, this.h, this.xJustify, this.yJustify, this.backgroundColor, this.foregroundColor, this.highlighted, this.layer);
@@ -274,6 +273,36 @@ AnimatedRectangle.prototype.createUndoDelete = function()
 AnimatedRectangle.prototype.setHighlight = function(value)
 {
 	this.highlighted = value;
+}
+
+
+
+function UndoDeleteRectangle(id, lab, x, y, w, h, xJust, yJust, bgColor, fgColor, highlight, lay)
+{
+	this.objectID = id;
+	this.posX = x;
+	this.posY = y;
+	this.width = w;
+	this.height = h;
+	this.xJustify = xJust;
+	this.yJustify = yJust;
+	this.backgroundColor= bgColor;
+	this.foregroundColor = fgColor;
+	this.nodeLabel = lab;
+	this.layer = lay;
+	this.highlighted = highlight;
+}
+
+UndoDeleteRectangle.prototype = new UndoBlock();
+UndoDeleteRectangle.prototype.constructor = UndoDeleteRectangle;
+
+
+UndoDeleteRectangle.prototype.undoInitialStep = function(world)
+{
+	world.addRectangleObject(this.objectID, this.nodeLabel, this.width, this.height, this.xJustify, this.yJustify, this.backgroundColor, this.foregroundColor);
+	world.setNodePosition(this.objectID, this.posX, this.posY);
+	world.setLayer(this.objectID, this.layer);
+	world.setHighlight(this.objectID, this.highlighted);
 }
 
 

@@ -1035,11 +1035,11 @@ ProcessScheduling.prototype.rr = function (value) {
 
     //就绪队列
     this.cmd("CreateLabel", this.nextIndex++, "就绪队列：", 70, 630, 0);
-    var toKnowTheNum = this.nextIndex;
 
     var tmpProcess = new Array();
     var timeslice = 5;//时间片
-    Process.sort(by('readyTime'));
+    //Process.sort(by('readyTime'));
+    Process.sort(function(a, b) { return a.readyTime - b.readyTime; });
 
     for(var i = 0; i < Process.length; ++i){
         tmpProcess.unshift(Process[i]);
@@ -1049,15 +1049,17 @@ ProcessScheduling.prototype.rr = function (value) {
     var BeginTime = tmpProcess[tmpProcess.length - 1].readyTime;
     Ready.unshift(tmpProcess[tmpProcess.length - 1]);
     tmpProcess.pop();
-    console.log(Process);
 
     var tmpFirstProcessID = Ready[Ready.length - 1].pid;
     var tmpFirstProcessRT = Ready[Ready.length - 1].readyTime;
-    this.cmd("SetText", this.theStaus, "首先将第一个到达的进程处于时间片内运行，当前进程ID为" + tmpFirstProcessID);
-    this.cmd("Step");
 
-    var tmpGridIndex = this.nextIndex;
+    var tmpGridIndex = this.nextIndex++;
     var tmpxPos = 180;
+
+    for(var i = 0; i < 10; ++i){
+        this.cmd("CreateGrid", tmpGridIndex + i, "0", 30, 30, tmpxPos, 640, "center", "center");
+        tmpxPos+=30;
+    }
 
 
     var tmpNextProcessId = null;
@@ -1066,15 +1068,6 @@ ProcessScheduling.prototype.rr = function (value) {
     for(var i = 0; i <= 10; ++i){
         CountTheProcess[i] = 0;
     }
-    this.cmd("SetBackgroundColor", tmpFirstProcessID * 16, HIGHLIGHT_BAR_BACKGROUND_COLOR);
-    this.cmd("Step");
-
-    //开始时间
-    this.cmd("SetBackgroundColor", tmpFirstProcessID * 16 + 8, HIGHLIGHT_BAR_BACKGROUND_COLOR);
-    this.cmd("SetText", tmpFirstProcessID * 16 + 9, tmpFirstProcessRT);
-    this.cmd("Step");
-    this.cmd("SetBackgroundColor", tmpFirstProcessID * 16 + 8, "#fff");
-    this.cmd("Step");
 
     //begin
     var firstP = true;
@@ -1082,7 +1075,7 @@ ProcessScheduling.prototype.rr = function (value) {
     {
         if (tmpProcess.length != 0 && BeginTime >= tmpProcess[tmpProcess.length - 1].readyTime && firstP == false)    //有新作业到达，加入就绪队列
         {
-            Ready.push(tmpProcess[tmpProcess.length - 1]);
+            Ready.unshift(tmpProcess[tmpProcess.length - 1]);
             //既然来到这里，当然是有一个新的开始啦
             var signId = Ready[Ready.length - 1].pid;
             this.cmd("SetText", this.theStaus, "下一个进行时间片内运行的进程ID为" + signId);
@@ -1098,16 +1091,38 @@ ProcessScheduling.prototype.rr = function (value) {
 
             tmpProcess.pop();
         }
-        else if(Ready.length == 0 && tmpProcess.length != 0 && BeginTime < tmpProcess[tmpProcess.length - 1].readyTime){
+        else if(Ready.length == 0 && tmpProcess.length != 0 && BeginTime < tmpProcess[tmpProcess.length - 1].readyTime){ //时间空隙
             BeginTime = tmpProcess[tmpProcess.length - 1].readyTime;
             this.cmd("SetText", this.theStaus, "由于目前就绪队列已经没有进程，因而取未来第一个到达的进程就绪时间为当前时间。");
             this.cmd("Step");
             this.cmd("SetText", this.theStaus, "新的进程ID为" + tmpProcess[tmpProcess.length - 1].pid);
             this.cmd("Step");
+            this.cmd("SetBackgroundColor", tmpProcess[tmpProcess.length - 1].pid * 16, HIGHLIGHT_BAR_BACKGROUND_COLOR);
+            this.cmd("Step");
+
+            //开始时间
+            this.cmd("SetBackgroundColor", tmpProcess[tmpProcess.length - 1].pid * 16 + 8, HIGHLIGHT_BAR_BACKGROUND_COLOR);
+            this.cmd("SetText", tmpProcess[tmpProcess.length - 1].pid * 16 + 9, BeginTime);
+            this.cmd("Step");
+            this.cmd("SetBackgroundColor", tmpProcess[tmpProcess.length - 1].pid * 16 + 8, "#fff");
+
             continue;
         }
         if (Ready[Ready.length - 1].FinishTime + timeslice < Ready[Ready.length - 1].ServerTime)     //时间片用完没运行完,加入队尾
         {
+            this.cmd("SetText", this.theStaus, "当前运行的进程ID为" + Ready[Ready.length - 1].pid);
+            this.cmd("Step");
+            this.cmd("SetBackgroundColor", Ready[Ready.length - 1].pid * 16, HIGHLIGHT_BAR_BACKGROUND_COLOR);
+            this.cmd("Step");
+
+            //开始时间
+            if(CountTheProcess[Ready[Ready.length - 1].pid] != 1) {
+                this.cmd("SetBackgroundColor", Ready[Ready.length - 1].pid * 16 + 8, HIGHLIGHT_BAR_BACKGROUND_COLOR);
+                this.cmd("SetText", Ready[Ready.length - 1].pid * 16 + 9, BeginTime);
+                this.cmd("Step");
+                this.cmd("SetBackgroundColor", Ready[Ready.length - 1].pid * 16 + 8, "#fff");
+            }
+
             CountTheProcess[Ready[Ready.length - 1].pid] ++;
 
             //描述
@@ -1127,6 +1142,13 @@ ProcessScheduling.prototype.rr = function (value) {
             this.cmd("SetBackgroundColor", Ready[Ready.length - 1].pid * 16, "#fff");
             this.cmd("Step");
 
+            var j = 0;
+            while(j < tmpProcess.length && tmpProcess[tmpProcess.length - 1].readyTime <= Ready[Ready.length - 1].FinishTime) {
+            console.log("id :" + tmpProcess[tmpProcess.length - 1].pid + "的" + tmpProcess[tmpProcess.length - 1].readyTime + " 比 " + "id : " + Ready[Ready.length - 1].pid + "的" + Ready[Ready.length - 1].FinishTime);
+                Ready.unshift(tmpProcess.pop());
+                j++;
+            }
+
             Ready.unshift(Ready[Ready.length - 1]);
             Ready.pop();
             BeginTime += timeslice;
@@ -1138,16 +1160,26 @@ ProcessScheduling.prototype.rr = function (value) {
         }
         else        //此作业运行完
         {
-            if(CountTheProcess[Ready[Ready.length - 1].pid] != 1){
+
+            this.cmd("SetText", this.theStaus, "当前运行的进程ID为" + Ready[Ready.length - 1].pid);
+            this.cmd("Step");
+            this.cmd("SetBackgroundColor", Ready[Ready.length - 1].pid * 16, HIGHLIGHT_BAR_BACKGROUND_COLOR);
+            this.cmd("Step");
+            //开始时间
+            if(CountTheProcess[Ready[Ready.length - 1].pid] != 1) {
+                this.cmd("SetBackgroundColor", Ready[Ready.length - 1].pid * 16 + 8, HIGHLIGHT_BAR_BACKGROUND_COLOR);
+                this.cmd("SetText", Ready[Ready.length - 1].pid * 16 + 9, BeginTime);
+                this.cmd("Step");
+                this.cmd("SetBackgroundColor", Ready[Ready.length - 1].pid * 16 + 8, "#fff");
+            }
+
+
+            if(CountTheProcess[Ready[Ready.length - 1].pid] != 1){ //立即完成
                 this.cmd("SetText", this.theStaus, "由于当前进程的需服务时间小于或等于一个时间片，即" + Ready[Ready.length - 1].ServerTime + "<=" + timeslice + "，此进程能在一个时间片内完成。");
                 this.cmd("Step");
                 BeginTime += Ready[Ready.length - 1].ServerTime;
             }
-            else {
-                if(CountTheProcess[Ready[Ready.length - 1].pid] == 1 && Ready[Ready.length - 1].pid == tmpNextProcessId && tmpNextProcessId != null){
-                    this.cmd("SetText", this.theStaus, "由于在运行时就绪队列内没有新的进程入内，所以继续在时间片内运行进程在就绪队列中的首位进程" + tmpNextProcessId);
-                    this.cmd("Step");
-                }
+            else { //没新进程
                 BeginTime += (Ready[Ready.length - 1].ServerTime - timeslice);
                 var tmpCount = Ready[Ready.length - 1].ServerTime - timeslice;
                 this.cmd("SetText", this.theStaus, "当前进程" + Ready[Ready.length - 1].pid + "需服务时间为" + Ready[Ready.length - 1].ServerTime + "，在经历第一个时间片后的剩余时间" + tmpCount + "足够完成此进程。");
@@ -1177,6 +1209,13 @@ ProcessScheduling.prototype.rr = function (value) {
             this.cmd("SetBackgroundColor", Ready[Ready.length - 1].pid * 16 + 14, "#fff");
             this.cmd("Step");
 
+            var j = 0;
+            while(j < tmpProcess.length && tmpProcess[tmpProcess.length - 1].readyTime <= Ready[Ready.length - 1].FinishTime) {
+                console.log("id :" + tmpProcess[tmpProcess.length - 1].pid + "的" + tmpProcess[tmpProcess.length - 1].readyTime + " 比 " + "id : " + Ready[Ready.length - 1].pid + "的" + Ready[Ready.length - 1].FinishTime);
+                Ready.unshift(tmpProcess.pop());
+                j++;
+            }
+
             //完成的染上绿色标记
             for(var j = 0; j <= 14; j += 2){
                 this.cmd("SetBackgroundColor", Ready[Ready.length - 1].pid * 16 + j, "#008B00");
@@ -1187,8 +1226,21 @@ ProcessScheduling.prototype.rr = function (value) {
             Ready.pop();
         }
         firstP = false;
+        for(var i = 0; i < 10; ++i){
+            this.cmd("SetText", tmpGridIndex + i, 0);
+        }
+        if(Ready.length != 0) {
+            this.cmd("SetText", this.theStaus, "刷新就绪队列");
+            this.cmd("Step");
+            for (var i = 0; i < Ready.length; ++i) {
+                this.cmd("SetText", tmpGridIndex + i, Ready[Ready.length - i - 1].pid);
+            }
+            this.cmd("Step");
+
+        }
     }
 
+    console.log(result);
     var tmpFinishStaus = "\u6240\u6709\u8fdb\u7a0b\u5747\u5df2\u5b8c\u6210\u3002";
     tmpFinishStaus = reconvert(tmpFinishStaus);
     this.cmd("SetText", this.theStaus, tmpFinishStaus);

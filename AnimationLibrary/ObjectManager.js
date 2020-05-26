@@ -116,26 +116,6 @@ function ObjectManager()
 
 	}
 
-	this.setAlpha = function(nodeID, alphaVal)
-	{
-		if (this.Nodes[nodeID] != null && this.Nodes[nodeID] != undefined)
-		{
-			this.Nodes[nodeID].setAlpha(alphaVal);
-		}
-	}
-
-	this.getAlpha = function(nodeID)
-	{
-		if (this.Nodes[nodeID] != null && this.Nodes[nodeID] != undefined)
-		{
-			return this.Nodes[nodeID].getAlpha();
-		}
-		else
-		{
-			return -1;
-		}
-	}
-
 	this.getTextColor = function(nodeID, index)
 	{
 		if (this.Nodes[nodeID] != null && this.Nodes[nodeID] != undefined)

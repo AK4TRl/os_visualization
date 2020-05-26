@@ -179,11 +179,12 @@ ProcessScheduling.prototype.createVisualObjects = function(){
 }
 ProcessScheduling.prototype.disableUI = function(event) {
     //this.resetButton.disabled = true;
-    this.fcfsButton.disabled = true;
+    /*this.fcfsButton.disabled = true;
     this.sjfButton.disabled = true;
     this.psaButton.disabled = true;
     this.hrrnButton.disabled = true;
     this.rrButton.disabled = true;
+     */
 }
 ProcessScheduling.prototype.enableUI = function(event) {
     //this.resetButton.disabled = false
@@ -241,11 +242,7 @@ ProcessScheduling.prototype.fcfsCallback = function (option) {
     this.animationManager.skipForward();
     this.randomizeArray(1);
 
-    this.fcfsButton.disabled = true;
-    this.sjfButton.disabled = true;
-    this.psaButton.disabled = true;
-    this.hrrnButton.disabled = true;
-    this.rrButton.disabled = true;
+
 
     var f = document.getElementById("GeneralAnimationControls");
     var childs = f.childNodes;
@@ -399,11 +396,6 @@ ProcessScheduling.prototype.sjfCallback = function (option) {
     this.animationManager.skipForward();
     this.randomizeArray(2);
 
-    this.fcfsButton.disabled = true;
-    this.sjfButton.disabled = true;
-    this.psaButton.disabled = true;
-    this.hrrnButton.disabled = true;
-    this.rrButton.disabled = true;
 
     var f = document.getElementById("GeneralAnimationControls");
     var childs = f.childNodes;
@@ -570,11 +562,6 @@ ProcessScheduling.prototype.psaCallback = function (option) {
     this.animationManager.skipForward();
     this.randomizeArray(3);
 
-    this.fcfsButton.disabled = true;
-    this.sjfButton.disabled = true;
-    this.psaButton.disabled = true;
-    this.hrrnButton.disabled = true;
-    this.rrButton.disabled = true;
 
     var f = document.getElementById("GeneralAnimationControls");
     var childs = f.childNodes;
@@ -749,11 +736,6 @@ ProcessScheduling.prototype.hrrnCallback = function (option) {
     this.animationManager.skipForward();
     this.randomizeArray(4);
 
-    this.fcfsButton.disabled = true;
-    this.sjfButton.disabled = true;
-    this.psaButton.disabled = true;
-    this.hrrnButton.disabled = true;
-    this.rrButton.disabled = true;
 
     var task4 = "\u9ad8\u54cd\u5e94\u6bd4\u4f18\u5148\u8c03\u5ea6\u7b97\u6cd5\u5f00\u59cb";
     task4 = reconvert(task4);
@@ -993,11 +975,6 @@ ProcessScheduling.prototype.rrCallback = function (option) {
     this.animationManager.skipForward();
     this.randomizeArray(5);
 
-    this.fcfsButton.disabled = true;
-    this.sjfButton.disabled = true;
-    this.psaButton.disabled = true;
-    this.hrrnButton.disabled = true;
-    this.rrButton.disabled = true;
 
     var task5 = "\u65f6\u95f4\u7247\u8f6e\u8f6c\u8c03\u5ea6\u7b97\u6cd5\u5f00\u59cb";
     task5 = reconvert(task5);

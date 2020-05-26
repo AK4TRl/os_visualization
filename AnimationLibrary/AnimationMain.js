@@ -513,12 +513,6 @@ function AnimationManager(objectManager)
                     undoBlock.push(undoConnect);
                 }
             }
-            else if (nextCommand[0].toUpperCase() == "SETALPHA")
-            {
-                var oldAlpha = this.animatedObjects.getAlpha(parseInt(nextCommand[1]));
-                this.animatedObjects.setAlpha(parseInt(nextCommand[1]), parseFloat(nextCommand[2]));
-                undoBlock.push(new UndoSetAlpha(parseInt(nextCommand[1]), oldAlpha));
-            }
             else if (nextCommand[0].toUpperCase() == "SETTEXT")
             {
                 if (nextCommand.length > 3)

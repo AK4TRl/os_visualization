@@ -1,6 +1,3 @@
-﻿/**
- * Created by AK4TRL on 2017/7/3.
- */
 
 function AnimatedLabel(id, val, center, initialWidth)
 {
